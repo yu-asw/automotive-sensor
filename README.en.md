@@ -1,0 +1,17 @@
+# Automotive Sensor — Course Materials
+
+Yeungnam University, Department of Automotive Software · 3rd-year major elective · Fall 2026
+
+- **Materials site**: https://yu-asw.github.io/automotive-sensor/ — open the slides right in your browser.
+- Download: **Code → Download ZIP** at the top right of this repository, or `git clone https://github.com/yu-asw/automotive-sensor.git`
+
+## What's here
+
+| Path | Description |
+|---|---|
+| `lectures/NN/slides.en.html` | Slides for each lecture (web, ←/→ keys). Korean version: `slides.html` |
+| `lectures/NN/slides.en.pdf` | The same slides as PDF |
+| `docs/course-plan.en.md` · `.html` | Course plan — project, milestones, grading |
+| `docs/course-plan.en.docx` | Two-page A4 summary |
+
+Materials are updated as the course progresses. Questions: in class, or ask the instructor.

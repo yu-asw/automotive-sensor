@@ -1,0 +1,609 @@
+<title>Automotive Sensor Project Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap">
+<style>
+  :root{
+    --ground:#F1F4F8;
+    --surface:#FFFFFF;
+    --surface-2:#E9EDF3;
+    --ink:#141922;
+    --ink-soft:#4E5867;
+    --ink-faint:#7A8496;
+    --rule:#D3DAE4;
+    --rule-soft:#E3E8EF;
+    --accent:#1B4A8C;
+    --accent-soft:#E3ECF8;
+    --signal:#B0620F;
+    --signal-soft:#F7EBDC;
+    --s-cam:#2E71B0;
+    --s-usn:#42875D;
+    --s-rad:#B0620F;
+    --s-lid:#7A50B5;
+    --s-gnss:#B14C6E;
+    --s-imu:#2F7F84;
+    --shadow:0 1px 2px rgba(20,25,34,.05), 0 8px 24px -12px rgba(20,25,34,.18);
+    --measure:68ch;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0E1218;
+      --surface:#151A22;
+      --surface-2:#1C222C;
+      --ink:#E7EBF2;
+      --ink-soft:#9BA5B5;
+      --ink-faint:#727D8D;
+      --rule:#28303B;
+      --rule-soft:#1F262F;
+      --accent:#7AA9E8;
+      --accent-soft:#18263A;
+      --signal:#E0994D;
+      --signal-soft:#2B2015;
+      --s-cam:#63A6DE;
+      --s-usn:#6FBE8E;
+      --s-rad:#E0994D;
+      --s-lid:#A98AE0;
+      --s-gnss:#E0839F;
+      --s-imu:#5FB6BB;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0E1218;
+    --surface:#151A22;
+    --surface-2:#1C222C;
+    --ink:#E7EBF2;
+    --ink-soft:#9BA5B5;
+    --ink-faint:#727D8D;
+    --rule:#28303B;
+    --rule-soft:#1F262F;
+    --accent:#7AA9E8;
+    --accent-soft:#18263A;
+    --signal:#E0994D;
+    --signal-soft:#2B2015;
+    --s-cam:#63A6DE;
+    --s-usn:#6FBE8E;
+    --s-rad:#E0994D;
+    --s-lid:#A98AE0;
+    --s-gnss:#E0839F;
+    --s-imu:#5FB6BB;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,sans-serif;
+    font-weight:400;
+    font-size:15.5px;
+    line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:920px;margin:0 auto;padding:0 28px 96px}
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    border-bottom:2px solid var(--ink);
+    padding:56px 0 22px;
+    margin-bottom:0;
+  }
+  .kicker{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--signal);
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    margin-bottom:18px;
+  }
+  .kicker .sep{color:var(--rule);}
+  h1{
+    font-size:clamp(30px,5.4vw,46px);
+    font-weight:700;line-height:1.18;letter-spacing:-.02em;
+    margin:0 0 14px;text-wrap:balance;
+  }
+  .standfirst{
+    font-size:17px;color:var(--ink-soft);font-weight:300;
+    max-width:var(--measure);margin:0 0 26px;
+  }
+  .spec{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+    gap:1px;background:var(--rule);
+    border:1px solid var(--rule);
+  }
+  .spec div{background:var(--ground);padding:11px 14px}
+  .spec dt{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink-faint);margin:0 0 3px;
+  }
+  .spec dd{margin:0;font-size:14.5px;font-weight:500;font-variant-numeric:tabular-nums}
+  .spec dd.hi{color:var(--signal);font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding-top:52px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+  .sec-num{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;font-weight:600;color:var(--accent);
+    letter-spacing:.06em;padding-top:5px;
+  }
+  h2{
+    font-size:23px;font-weight:600;letter-spacing:-.015em;margin:0;
+    text-wrap:balance;
+  }
+  h3{
+    font-size:16px;font-weight:600;margin:34px 0 10px;letter-spacing:-.005em;
+  }
+  h3 .mono-tag{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;color:var(--ink-faint);font-weight:500;
+    letter-spacing:.08em;margin-right:8px;
+  }
+  .sec-rule{height:1px;background:var(--rule);margin:14px 0 22px}
+  p{margin:0 0 15px;max-width:var(--measure)}
+  ul,ol{margin:0 0 15px;padding-left:20px;max-width:var(--measure)}
+  li{margin-bottom:7px}
+  strong{font-weight:600}
+  em{font-style:normal;color:var(--signal);font-weight:500}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--rule)}
+  a:hover{border-bottom-color:var(--accent)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+  code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.88em}
+  code{background:var(--surface-2);padding:1px 5px;border-radius:3px;color:var(--ink-soft)}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--rule);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:14px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:top;line-height:1.6}
+  thead th{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:500;
+    background:var(--surface-2);border-bottom:1px solid var(--rule);
+    white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none}
+  td.wk{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-variant-numeric:tabular-nums;font-weight:600;
+    color:var(--ink-faint);width:1%;white-space:nowrap;text-align:right;
+  }
+  th.rowh,td.rowh{font-weight:600;white-space:nowrap;width:1%}
+  tr.ms td{background:var(--signal-soft)}
+  tr.ms td.wk{color:var(--signal);box-shadow:inset 3px 0 0 var(--signal)}
+  tr.exam td{background:var(--accent-soft)}
+  tr.exam td.wk{color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+  .tag{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;font-weight:600;letter-spacing:.04em;
+    color:var(--signal);white-space:nowrap;
+  }
+  .tag.ex{color:var(--accent)}
+  .col-a{background:var(--surface-2)}
+
+  /* ---------- sensor chips ---------- */
+  .chip{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .dot{width:8px;height:8px;border-radius:50%;flex:none;display:inline-block}
+  .d-cam{background:var(--s-cam)} .d-usn{background:var(--s-usn)}
+  .d-rad{background:var(--s-rad)} .d-lid{background:var(--s-lid)}
+  .d-gnss{background:var(--s-gnss)} .d-imu{background:var(--s-imu)}
+
+  /* ---------- role split ---------- */
+  .roles{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+  .role{border:1px solid var(--rule);background:var(--surface);padding:18px 20px 20px;box-shadow:var(--shadow)}
+  .role .who{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);
+  }
+  .role h4{font-size:16px;font-weight:600;margin:4px 0 12px}
+  .role .sensors{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:13px;font-size:13px;color:var(--ink-soft)}
+  .role p{font-size:13.5px;color:var(--ink-soft);margin:0 0 11px}
+  .role .topics{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11.5px;color:var(--ink-faint);line-height:1.9;
+    border-top:1px solid var(--rule-soft);padding-top:10px;
+    overflow-wrap:anywhere;
+  }
+
+  /* ---------- milestones ---------- */
+  .ms-list{display:grid;gap:0;border:1px solid var(--rule);background:var(--surface)}
+  .ms-item{display:grid;grid-template-columns:78px 1fr;gap:18px;padding:16px 20px;border-bottom:1px solid var(--rule-soft)}
+  .ms-item:last-child{border-bottom:none}
+  .ms-id{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:17px;font-weight:600;color:var(--signal);line-height:1.3;
+  }
+  .ms-when{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:10.5px;color:var(--ink-faint);letter-spacing:.08em;display:block;font-weight:500;
+  }
+  .ms-item h4{margin:0 0 5px;font-size:15px;font-weight:600}
+  .ms-item p{margin:0;font-size:13.5px;color:var(--ink-soft);max-width:none}
+
+  /* ---------- callout ---------- */
+  .callout{
+    border-left:3px solid var(--signal);
+    background:var(--signal-soft);
+    padding:15px 20px;margin:0 0 18px;
+  }
+  .callout p{margin:0;max-width:none;font-size:14px}
+  .callout p+p{margin-top:9px}
+  .note{
+    border-left:3px solid var(--rule);
+    padding:2px 0 2px 16px;margin:0 0 18px;
+    font-size:13.5px;color:var(--ink-soft);
+  }
+  .note p{margin:0;max-width:none}
+
+  /* ---------- schedule (session shape) ---------- */
+  .slots{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:20px}
+  .slot{background:var(--surface);padding:15px 17px}
+  .slot .t{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;
+    display:block;margin-bottom:6px;
+  }
+  .slot .n{font-weight:600;font-size:14.5px;display:block;margin-bottom:4px}
+  .slot .d{font-size:13px;color:var(--ink-soft);line-height:1.6}
+
+  /* ---------- grading ---------- */
+  .bar{display:flex;height:34px;border:1px solid var(--rule);margin-bottom:12px;overflow:hidden}
+  .bar span{
+    display:flex;align-items:center;justify-content:center;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11.5px;font-weight:600;color:#fff;
+    font-variant-numeric:tabular-nums;
+  }
+  .b1{flex:50;background:var(--signal)}
+  .b2{flex:20;background:var(--accent)}
+  .b3{flex:20;background:var(--s-imu)}
+  .b4{flex:10;background:var(--ink-faint)}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--ink-soft);margin-bottom:20px}
+  .legend .chip strong{color:var(--ink)}
+  .sw{width:11px;height:11px;flex:none;display:inline-block}
+  .sw1{background:var(--signal)} .sw2{background:var(--accent)}
+  .sw3{background:var(--s-imu)} .sw4{background:var(--ink-faint)}
+
+  /* ---------- prep ---------- */
+  .prep{display:grid;gap:0;border:1px solid var(--rule);background:var(--surface);margin-bottom:18px}
+  .prep li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:13px 20px;border-bottom:1px solid var(--rule-soft);margin:0;max-width:none}
+  .prep li:last-child{border-bottom:none}
+  .prep .n{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;font-weight:600;color:var(--accent);padding-top:3px;
+  }
+  .prep b{display:block;font-weight:600;font-size:14.5px;margin-bottom:2px}
+  .prep span.desc{font-size:13.5px;color:var(--ink-soft);line-height:1.65}
+  ol.prep{list-style:none;padding-left:0}
+
+  .paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .path{background:var(--surface);padding:16px 18px}
+  .path b{display:block;font-size:14.5px;font-weight:600;margin-bottom:5px}
+  .path span{font-size:13px;color:var(--ink-soft);line-height:1.6}
+
+  footer{
+    margin-top:64px;padding-top:20px;border-top:1px solid var(--rule);
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;color:var(--ink-faint);letter-spacing:.04em;line-height:1.9;
+  }
+
+  @media (max-width:720px){
+    .page{padding:0 18px 72px}
+    .roles{grid-template-columns:1fr}
+    .slots{grid-template-columns:1fr}
+    .ms-item{grid-template-columns:1fr;gap:6px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+  @media print{
+    body{background:#fff;font-size:10.5pt}
+    .page{max-width:none;padding:0}
+    section{padding-top:26px;break-inside:avoid}
+    .tw,.roles,.ms-list,.slots,.prep,.paths{break-inside:avoid}
+    .masthead{padding-top:0}
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="kicker">
+      <span>Department of Automotive Software, Yeungnam University</span>
+      <span class="sep">/</span>
+      <span>Fall 2026</span>
+    </div>
+    <h1>Automotive Sensor — a two-student project course</h1>
+    <p class="standfirst">Two students enrolled. This is not a course you sit and listen to: over the semester you build one self-driving vehicle that integrates six sensors, and you make it drive.</p>
+    <dl class="spec">
+      <div><dt>Placement</dt><dd>Year 3 fall, elective</dd></div>
+      <div><dt>Credits / hours</dt><dd>3 credits · 3 h/week</dd></div>
+      <div><dt>Enrollment</dt><dd class="hi">2 students</dd></div>
+      <div><dt>Format</dt><dd class="hi">Project-based</dd></div>
+      <div><dt>Platform</dt><dd>TOPST D3-G</dd></div>
+      <div><dt>Sensors covered</dt><dd>Six types</dd></div>
+    </dl>
+  </header>
+
+  <section id="s0">
+    <div class="sec-head"><span class="sec-num">00</span><h2>First, why two students is an advantage</h2></div>
+    <div class="sec-rule"></div>
+    <p>This course was originally designed for a class of twenty. Had it run that way, four of you would have shared a single board, and you would have spent most of the class <strong>watching someone else do the work</strong>. With two students, this becomes possible instead.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th></th><th>Class of 20 (original plan)</th><th>Two students (this plan)</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">Equipment</td><td>one kit shared by four</td><td class="col-a"><strong>one kit each, plus a project vehicle dedicated to the two of you</strong></td></tr>
+          <tr><td class="rowh">Radar lab</td><td>a few-dollar Doppler module and no further; automotive FMCW radar as an instructor demo only</td><td class="col-a"><strong>hands-on with a TI IWR6843 mmWave radar</strong> — out of reach on a 20-student budget</td></tr>
+          <tr><td class="rowh">Deliverable</td><td>four individual written assignments</td><td class="col-a"><strong>one self-driving vehicle that actually drives</strong>, plus the subsystem you built yourself</td></tr>
+          <tr><td class="rowh">Feedback</td><td>a few times a semester</td><td class="col-a"><strong>a face-to-face lab meeting every week, every lab notebook marked up</strong></td></tr>
+          <tr><td class="rowh">Level</td><td>pitched down so that everyone can keep up</td><td class="col-a"><strong>pitched up, on the assumption that we dig you out on the spot</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <p>One condition comes attached. <strong>With two of you there is nowhere to hide.</strong> Every week you have to record what you did and explain it, and if one of you stops, the whole project stops. This plan is written on that assumption.</p>
+    </div>
+  </section>
+
+  <section id="s1">
+    <div class="sec-head"><span class="sec-num">01</span><h2>What this course covers</h2></div>
+    <div class="sec-rule"></div>
+    <p>Self-driving and ADAS both start at the <strong>sensors</strong> that stand in for the human eye. This course covers the six environment-perception sensors on a vehicle: how they work, how to read their specifications, and how to interface with them and get their data out.</p>
+    <div class="legend" style="margin-bottom:22px">
+      <span class="chip"><i class="dot d-cam"></i><strong>Camera</strong></span>
+      <span class="chip"><i class="dot d-usn"></i><strong>Ultrasonic</strong></span>
+      <span class="chip"><i class="dot d-rad"></i><strong>Radar</strong></span>
+      <span class="chip"><i class="dot d-lid"></i><strong>Lidar</strong></span>
+      <span class="chip"><i class="dot d-gnss"></i><strong>GNSS</strong></span>
+      <span class="chip"><i class="dot d-imu"></i><strong>IMU</strong></span>
+    </div>
+    <p>The boundary is deliberate. This course goes as far as <em>"what physical principle a sensor uses to measure the world, and in what form that data arrives in software."</em> The algorithms that process that data belong to the courses that follow.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Topic</th><th>Course</th></tr></thead>
+        <tbody>
+          <tr><td>Sensor principles · specifications · interfaces · data acquisition</td><td class="col-a"><strong>Automotive Sensor (this course, year 3 fall)</strong></td></tr>
+          <tr><td>Learning algorithms — CNN, RNN and the rest</td><td>Deep Learning (year 3 fall, recommended alongside)</td></tr>
+          <tr><td>2D image and 3D point-cloud signal processing, object recognition</td><td>Automotive Vision (year 4 spring)</td></tr>
+          <tr><td>Advanced sensor fusion, navigation · perception · control</td><td>Autonomous Driving (year 4 fall)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="mono-tag">OUTCOME</span>What you will be able to do afterwards</h3>
+    <ol>
+      <li>Explain how each of the six sensors works down to the physics, and read the numbers that matter on a datasheet (resolution · FOV · range resolution · detection range).</li>
+      <li><strong>Wire a sensor up yourself and get data out of it</strong> on an embedded board, over GPIO · I2C · UART · MIPI-CSI/V4L2 · GStreamer.</li>
+      <li>Calibrate a camera, and explain the intrinsic and extrinsic parameters and the distortion model.</li>
+      <li>Read camera · lidar · radar data from public real-vehicle datasets (KITTI, nuScenes), visualize it and do a first analysis.</li>
+      <li>Compare what each sensor is good and bad at (light · weather · range · resolution) and explain why sensor fusion is necessary.</li>
+      <li><strong>Integrate several sensors into a single real-time system, and make that system work on a moving vehicle.</strong> <span style="color:var(--ink-faint);font-size:13px">← added because there are only two of you</span></li>
+    </ol>
+  </section>
+
+  <section id="s2">
+    <div class="sec-head"><span class="sec-num">02</span><h2>The semester project — a sensor-integrated self-driving mini car</h2></div>
+    <div class="sec-rule"></div>
+
+    <h3><span class="mono-tag">PLATFORM</span>Platform</h3>
+    <p>The two of you build <strong>one</strong> 1/10-scale self-driving vehicle <strong>together</strong>, on a <strong>TOPST D3-G</strong> (Telechips TCC8050, a Korean automotive SoC) with a <strong>PiRacer chassis</strong>. The software is Ubuntu 22.04 + <strong>ROS2 Humble</strong>. Every sensor gets its own ROS2 node and the nodes hand data to each other over topics — the same structure a real autonomous-driving software stack uses.</p>
+    <div class="note"><p>This platform (D-Racer) is the official platform of the 2026 SEA:ME hackathon (sponsored by Volkswagen Group Korea, hosted by Kookmin University). What you build this semester can go straight into the competition, or into capstone design.</p></div>
+    <p><strong>The order is "get the car driving first, then put the sensors on one at a time."</strong> Two weeks of groundwork → drive the car with the camera (weeks 3–6) → add the lidar (weeks 7–9) → add the radar (weeks 10–12) → integrate (weeks 13–15). Every time a sensor goes on, the same four steps repeat: <em>principle → wiring and acquisition → turn it into a vehicle capability → demo and record</em>.</p>
+
+    <h3><span class="mono-tag">DEMO</span>Final demo scenario · week 15</h3>
+    <p>On an indoor track, the vehicle does the following.</p>
+    <div class="tw">
+      <table>
+        <tbody>
+          <tr><td class="wk">1</td><td class="rowh"><span class="chip"><i class="dot d-cam"></i>Camera</span></td><td>Lane-following autonomous driving — one full lap of the track</td></tr>
+          <tr><td class="wk">2</td><td class="rowh"><span class="chip"><i class="dot d-usn"></i>Ultrasonic</span> <span class="chip"><i class="dot d-lid"></i>Lidar</span></td><td>Detect an obstacle ahead, then stop or steer around it — AEB in miniature</td></tr>
+          <tr><td class="wk">3</td><td class="rowh"><span class="chip"><i class="dot d-rad"></i>Radar</span></td><td>Measure the speed of an approaching object from the Doppler shift</td></tr>
+          <tr><td class="wk">4</td><td class="rowh"><span class="chip"><i class="dot d-gnss"></i>GNSS</span> <span class="chip"><i class="dot d-imu"></i>IMU</span></td><td>Log the driven trajectory and visualize it afterwards</td></tr>
+          <tr><td class="wk">5</td><td class="rowh">All six</td><td>All six streams merged live onto ROS2 topics and shown on the dashboard</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="mono-tag">ROLES</span>Who owns what</h3>
+    <p>You share one platform, and on it each of you has an <strong>assigned subsystem</strong>. The assignment is what you are responsible for delivering — it is <strong>not the scope of what you learn.</strong> The lectures and the midterm cover all six sensors, and both of you study all six.</p>
+    <div class="roles">
+      <div class="role">
+        <span class="who">Student A</span>
+        <h4>Perception / Vision</h4>
+        <div class="sensors">
+          <span class="chip"><i class="dot d-cam"></i>MIPI-CSI camera</span>
+          <span class="chip"><i class="dot d-cam"></i>USB webcam</span>
+        </div>
+        <p>V4L2/GStreamer video pipeline, camera calibration, lane detection (Canny + Hough), steering-angle computation</p>
+        <div class="topics">/camera/image_raw<br>/lane/steering_angle</div>
+      </div>
+      <div class="role">
+        <span class="who">Student B</span>
+        <h4>Ranging / Localization</h4>
+        <div class="sensors">
+          <span class="chip"><i class="dot d-usn"></i>Ultrasonic</span>
+          <span class="chip"><i class="dot d-rad"></i>Radar</span>
+          <span class="chip"><i class="dot d-lid"></i>2D lidar</span>
+          <span class="chip"><i class="dot d-gnss"></i>GNSS</span>
+          <span class="chip"><i class="dot d-imu"></i>IMU</span>
+        </div>
+        <p>GPIO ToF ranging, Doppler speed computation, lidar scans and obstacle clustering, NMEA parsing, I2C IMU, 1D Kalman filter</p>
+        <div class="topics">/ultrasonic/range · /scan<br>/radar/speed · /gps/fix · /imu/data</div>
+      </div>
+    </div>
+    <p><strong>Shared by both</strong>: system architecture, the vehicle control node (motor and servo), integration, the dashboard, and the final demo.</p>
+    <div class="callout">
+      <p><strong>Peer teaching is a graded item.</strong> At every lab meeting you brief the other person on your own progress, and just before week 8 and again in week 14 you sit an <strong>oral check on the other person's sensors</strong>. There are only two of you, so each of you is the other's only audience and only reviewer.</p>
+    </div>
+
+    <h3><span class="mono-tag">MILESTONES</span>Four milestones</h3>
+    <div class="ms-list">
+      <div class="ms-item">
+        <div><span class="ms-id">M1</span><span class="ms-when">END WK 4</span></div>
+        <div><h4>Platform alive</h4><p>D3-G boots, ROS2 nodes talk to each other, motor and servo under remote control drive 3 m in a straight line, CSI camera streams video</p></div>
+      </div>
+      <div class="ms-item">
+        <div><span class="ms-id">M2</span><span class="ms-when">END WK 6</span></div>
+        <div><h4>Camera autonomy</h4><p>One lap of the track (straights and gentle curves) driving on detected lane lines; stops when the ultrasonic sees something within 30 cm ahead</p></div>
+      </div>
+      <div class="ms-item">
+        <div><span class="ms-id">M3</span><span class="ms-when">END WK 9</span></div>
+        <div><h4>Lidar integrated</h4><p>2D lidar gives range and bearing to an obstacle ahead, and the car <strong>slows down or steers around it rather than stopping</strong>; no conflict with the camera-based driving</p></div>
+      </div>
+      <div class="ms-item">
+        <div><span class="ms-id">M4</span><span class="ms-when">END WK 12</span></div>
+        <div><h4>Radar integrated</h4><p>Doppler speed measurements logged, approach warning working, camera · lidar · radar topics published simultaneously</p></div>
+      </div>
+    </div>
+    <p style="font-size:13.5px;color:var(--ink-soft)">The final demo (week 15) is judged on all of that plus the ultrasonic and IMU: <strong>all six sensors publishing at once, a driving log (rosbag), and the dashboard</strong>.</p>
+    <div class="callout">
+      <p><strong>Milestones are not scored pass/fail.</strong> They are scored on the attempt and on the record of it. A failed attempt can still earn full marks if the lab notebook holds an analysis of the cause and the next hypothesis.</p>
+      <p>Half of any hardware project fails — that is the normal state. Do not hide it, write it down.</p>
+    </div>
+  </section>
+
+  <section id="s3">
+    <div class="sec-head"><span class="sec-num">03</span><h2>How the course runs</h2></div>
+    <div class="sec-rule"></div>
+
+    <h3><span class="mono-tag">SESSION</span>The three-hour session</h3>
+    <div class="slots">
+      <div class="slot"><span class="t">0:00 – 1:30</span><span class="n">90-minute lecture</span><span class="d">10-minute lab meeting (each of you briefs last week's progress, where you are stuck, this week's plan) + the principle, specifications and interface of the week's sensor (both of you together)</span></div>
+      <div class="slot"><span class="t">1:30 – 3:00</span><span class="n">90-minute lab</span><span class="d">Connect the week's sensor → acquire data → fold it into the vehicle. I am in the room; when you get stuck, we dig it out on the spot</span></div>
+    </div>
+
+    <h3><span class="mono-tag">LOGBOOK</span>Weekly lab notebook · 20% of the grade</h3>
+    <p><strong>Commit it as Markdown to your GitHub repository every week.</strong> It is graded on care and specificity, not length.</p>
+    <ol class="prep">
+      <li><span class="n">01</span><span><b>Theory summary</b><span class="desc">Three to five lines on what you learned this week. Write down what you did not understand, as it is</span></span></li>
+      <li><span class="n">02</span><span><b>Progress log</b><span class="desc">What you did / where you got stuck / what you tried / next week's plan</span></span></li>
+      <li><span class="n">03</span><span><b>Evidence</b><span class="desc">Measurements, plots, screenshots, oscilloscope captures, failure logs</span></span></li>
+      <li><span class="n">04</span><span><b>Source code</b><span class="desc">Committed to the same repository</span></span></li>
+    </ol>
+    <p>By the end of the semester that repository is your <strong>portfolio</strong>. In a job interview, a graduate application or a hackathon, what proves what you built is this record, not a transcript.</p>
+
+    <h3><span class="mono-tag">DATASET LAB</span>Dataset labs</h3>
+    <p>The project vehicle uses low-cost sensors. For real data from vehicle-grade sensors (3D lidar, 77 GHz radar) you <strong>work with public real-vehicle datasets instead</strong>: KITTI lidar point clouds in week 8, the nuScenes radar lab in week 11, both run on your own laptop (Colab is fine).</p>
+  </section>
+
+  <section id="s4">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Weekly plan</h2></div>
+    <div class="sec-rule"></div>
+    <p>Two weeks of groundwork → drive the car with the <span class="chip"><i class="dot d-cam"></i>camera</span> → add the <span class="chip"><i class="dot d-lid"></i>lidar</span> → add the <span class="chip"><i class="dot d-rad"></i>radar</span> → integrate. Every week: 90-minute lecture + 90-minute lab.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Wk</th><th>Theory — 90-minute lecture</th><th>Project — 90-minute lab</th><th>Due · check</th></tr></thead>
+        <tbody>
+          <tr><td class="wk">1</td><td>Orientation · autonomous driving concepts (sense-plan-act, SAE levels, ADAS and its sensors) · embedded systems and vehicle computing · the development environment</td><td>Dev-PC setup (Ubuntu 22.04), GitHub lab-notebook repository, SSH keys, talk through roles</td><td>Lab Notebook #1</td></tr>
+          <tr><td class="wk">2</td><td>Embedded Linux anatomy (bootloader · kernel · rootfs · device tree) · ROS2 architecture (nodes · topics) · sensor interfaces at a glance (GPIO/I2C/UART/CSI)</td><td><strong>Flash the D3-G image → boot → SSH → ROS2 hello</strong> · settle roles, draft the system architecture</td><td>Design document</td></tr>
+          <tr><td class="wk">3</td><td><span class="chip"><i class="dot d-cam"></i>Camera principles</span> — image sensor (CMOS · Bayer · ISP), lens and field of view, pinhole model · MIPI-CSI and V4L2</td><td>Connect the CSI camera, GStreamer pipeline, publish the image topic · assemble the PiRacer chassis</td><td></td></tr>
+          <tr class="ms"><td class="wk">4</td><td><span class="chip"><i class="dot d-cam"></i>Camera calibration</span> — intrinsics and the distortion model · vehicle actuators (PWM, servo and DC motor drivers)</td><td>Checkerboard calibration · motor and servo ROS2 nodes · remote driving</td><td><span class="tag">M1</span></td></tr>
+          <tr><td class="wk">5</td><td><span class="chip"><i class="dot d-cam"></i>Image processing basics</span> — color spaces, Canny edges, Hough lines, ROI · designing the lane-detection pipeline</td><td>Lane-detection node → steering angle → wire it to the control node</td><td></td></tr>
+          <tr class="ms"><td class="wk">6</td><td>Feel for a control loop (proportional control · lag · oscillation) · <span class="chip"><i class="dot d-usn"></i>ultrasonic</span> ToF and GPIO timing</td><td>Tune the lane following · HC-SR04 stop-for-obstacle</td><td><span class="tag">M2</span></td></tr>
+          <tr><td class="wk">7</td><td><span class="chip"><i class="dot d-lid"></i>Lidar principles</span> — laser and ToF, scanning methods, point-cloud structure, laser safety classes · reading a 2D lidar datasheet</td><td>Connect the YDLIDAR, ROS2 driver, visualize <code>/scan</code></td><td></td></tr>
+          <tr class="exam"><td class="wk">8</td><td><strong>Midterm concept check (30 min, weeks 1–7)</strong> · <span class="chip"><i class="dot d-lid"></i>point-cloud processing</span> — polar conversion, clustering, ground separation · 3D lidar and KITTI</td><td>Obstacle-detection node (range and bearing) · KITTI lab</td><td><span class="tag ex">CHECK</span></td></tr>
+          <tr class="ms"><td class="wk">9</td><td>Sensor coordinate frames and extrinsic calibration (camera-to-lidar alignment) · designing the avoidance behavior (stop → slow down → steer)</td><td>Integrate lidar-driven slowing and steering around, reconcile with camera driving</td><td><span class="tag">M3</span></td></tr>
+          <tr><td class="wk">10</td><td><span class="chip"><i class="dot d-rad"></i>Radar principles</span> — radio waves and frequency bands, the Doppler effect, CW vs FMCW, chirp and beat frequency</td><td>Speed measurement with the HB100 Doppler module, look at the IF signal</td><td></td></tr>
+          <tr><td class="wk">11</td><td><span class="chip"><i class="dot d-rad"></i>Radar signal processing</span> — Range-Doppler map (2D FFT), CFAR, angle estimation · automotive radar (SRR/LRR, ACC · AEB), 4D imaging radar</td><td><strong>TI IWR6843 mmWave lab</strong> · nuScenes radar lab</td><td></td></tr>
+          <tr class="ms"><td class="wk">12</td><td>Designing approach-warning and AEB logic · <span class="chip"><i class="dot d-imu"></i>IMU</span> <span class="chip"><i class="dot d-gnss"></i>GNSS</span> at a glance (drift, positioning error)</td><td>Integrate the radar approach warning · IMU logging (optional)</td><td><span class="tag">M4</span></td></tr>
+          <tr><td class="wk">13</td><td>Sensor fusion at a glance — what each sensor is good and bad at, intuition for the Kalman filter (1D)</td><td>All six topics publishing at once, rosbag recording, dashboard</td><td></td></tr>
+          <tr><td class="wk">14</td><td>Simulators (CARLA) at a glance · how to structure a presentation</td><td>Integration rehearsal · oral check on the other person's sensors</td><td>Rehearsal</td></tr>
+          <tr class="exam"><td class="wk">15</td><td colspan="2"><strong>Final demo · presentation · report</strong> — drive the track → 20-minute presentation each → questions</td><td><span class="tag ex">FINAL</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s5">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Grading</h2></div>
+    <div class="sec-rule"></div>
+    <div class="bar" role="img" aria-label="Project 50%, lab notebook 20%, midterm check 20%, participation 10%">
+      <span class="b1">PROJECT 50</span><span class="b2">LOGBOOK 20</span><span class="b3">MIDTERM 20</span><span class="b4">10</span>
+    </div>
+    <div class="legend">
+      <span class="chip"><i class="sw sw1"></i><strong>Project 50%</strong> — four milestones 20% + final demo 20% + final report 10%</span>
+      <span class="chip"><i class="sw sw2"></i><strong>Weekly lab notebook 20%</strong> — 14 submissions; each one missed costs marks</span>
+      <span class="chip"><i class="sw sw3"></i><strong>Midterm concept check 20%</strong> — 30-minute written paper at the start of the week 8 lecture, covering weeks 1–7</span>
+      <span class="chip"><i class="sw sw4"></i><strong>Participation and peer teaching 10%</strong> — lab-meeting briefings, two oral checks</span>
+    </div>
+    <p>There is no final exam; <strong>the final demo, presentation and report take its place</strong>.</p>
+    <p><strong>The final report</strong> is submitted individually and contains: (1) the architecture of the whole system, (2) the sensor principles · specifications · implementation · measurements for <strong>your own subsystem</strong>, (3) what failed and why, (4) your own conclusion on the limits of each sensor and why sensor fusion is needed, (5) what you would improve.</p>
+  </section>
+
+  <section id="s6">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Equipment and textbooks</h2></div>
+    <div class="sec-rule"></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Category</th><th>Items</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">Shared — project vehicle</td><td>One TOPST D3-G, PiRacer chassis, ArduCam OV5647 CSI camera, YDLIDAR X4 2D lidar, battery · charger</td></tr>
+          <tr><td class="rowh">Issued to each student</td><td>HC-SR04 ultrasonic, MPU-6050 IMU, NEO-6M GPS, HB100 Doppler radar module, breadboard · jumpers · resistor kit, USB webcam, microSD</td></tr>
+          <tr><td class="rowh">Shared lab equipment</td><td>TI IWR6843ISK mmWave radar evaluation board, checkerboard, oscilloscope, GPU PC for running CARLA</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <p>The parts issued to you are yours to take away and work on during the semester. <strong>Burning parts out and breaking them is inside the scope of learning</strong> — damage does not cost you marks, and there are spares. Just record how you broke it in the lab notebook.</p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Category</th><th>Reference</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">Required textbook</td><td>Jeong Seung-hwan, <em style="color:inherit;font-style:italic;font-weight:400">Autonomous Vehicle Engineering</em> (자율주행 자동차공학), 2nd ed., Golden Bell, 2024 — Part 2, "Perception"</td></tr>
+          <tr><td class="rowh">Supplementary</td><td>Hanky Sjafrie, <em style="color:inherit;font-style:italic;font-weight:400">Introduction to Self-Driving Vehicle Technology</em> (자율주행차량 기술 입문, Korean ed. tr. Kim Eun-do et al., Acorn, 2021) — Chapter 2, hardware and sensors</td></tr>
+          <tr><td class="rowh">Free resources</td><td>Yeong et al., <em style="color:inherit;font-style:italic;font-weight:400">Sensors</em> 21(6), 2021 (open-access review) · TI mmWave Training Series · TOPST official documentation · rlabbe, <em style="color:inherit;font-style:italic;font-weight:400">Kalman and Bayesian Filters in Python</em> · the KITTI and nuScenes datasets</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s7">
+    <div class="sec-head"><span class="sec-num">07</span><h2>What to have ready in the first two weeks</h2></div>
+    <div class="sec-rule"></div>
+    <p>You set your development PC up in the Lecture 1 lab and power the D3-G on in Lecture 2. <strong>The list below has to be in place before that, or the camera cannot go on in week 3.</strong></p>
+
+    <h3><span class="mono-tag">COURSES</span>Concurrent courses</h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th></th><th>Course</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">Helpful if already taken</td><td>MCU Programming (year 2 fall)<br>Signals and Linear Systems (year 2 fall)</td><td>Prior GPIO · I2C · UART experience and a feel for frequency puts you about three weeks ahead at the start</td></tr>
+          <tr class="ms"><td class="rowh">Strongly recommended alongside</td><td><strong>Embedded Systems (year 3 fall)</strong></td><td>It works with Raspberry Pi and Linux, which connects directly to the D3-G work here</td></tr>
+          <tr><td class="rowh">Recommended alongside</td><td>Deep Learning (year 3 fall)</td><td>Meshes with the week 5 image processing and the week 8 and 11 dataset labs</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="mono-tag">SELF-STUDY</span>Self-study · starts in the Lecture 1 lab</h3>
+    <p>In priority order. <strong>Items 1 to 3 must be done before Lecture 2.</strong></p>
+    <ol class="prep">
+      <li><span class="n">01</span><span><b>Python</b><span class="desc">Handling numpy arrays, plotting with matplotlib. Rather than memorizing syntax, get as far as "read some data and draw a picture of it" and that is enough</span></span></li>
+      <li><span class="n">02</span><span><b>The Linux command line</b><span class="desc"><code>cd</code> <code>ls</code> <code>apt</code> <code>ssh</code> <code>vim</code> (or nano), file permissions. You will be working over SSH on the board all semester</span></span></li>
+      <li><span class="n">03</span><span><b>Git / GitHub</b><span class="desc"><code>clone</code> <code>add</code> <code>commit</code> <code>push</code>, and what a branch is. This is where your lab notebook and code go — create the account in advance</span></span></li>
+      <li><span class="n">04</span><span><b>A taste of OpenCV</b><span class="desc">Read an image, convert to grayscale, run Canny. The first part of the official tutorial is enough</span></span></li>
+      <li><span class="n">05</span><span><b>The ROS2 Humble tutorial</b><span class="desc">Only the nodes and topics part. If you have time</span></span></li>
+    </ol>
+
+    <h3><span class="mono-tag">DECIDE</span>Something to think about beforehand</h3>
+    <p>In the Lecture 1 lab you <strong>discuss roles (A: perception / vision, B: ranging / localization) and settle them in Lecture 2</strong>. It helps to have thought about which side pulls you, and why. If you want both, that is also a good answer — in the back half of the semester you will end up in each other's code anyway.</p>
+  </section>
+
+  <section id="s8">
+    <div class="sec-head"><span class="sec-num">08</span><h2>Where this leads after the course ends</h2></div>
+    <div class="sec-rule"></div>
+    <div class="paths">
+      <div class="path"><b>Automotive Vision → Autonomous Driving</b><span>Year 4 spring and fall. The follow-on courses that process and fuse the sensor data you acquired here</span></div>
+      <div class="path"><b>The SEA:ME hackathon</b><span>Same D-Racer platform. Your semester result can be entered as it stands</span></div>
+      <div class="path"><b>Capstone design · graduation project</b><span>Extending this vehicle is the most natural next step</span></div>
+      <div class="path"><b>Portfolio</b><span>One GitHub repository holding 15 weeks of lab notebooks and videos of the thing working</span></div>
+    </div>
+  </section>
+
+  <footer>
+    AUTOMOTIVE SENSOR · Department of Automotive Software, Yeungnam University · Fall 2026<br>
+    Issued September 2026 · the detailed schedule may shift as the project goes
+  </footer>
+
+</div>

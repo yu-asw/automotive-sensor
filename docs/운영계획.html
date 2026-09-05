@@ -1,0 +1,610 @@
+<title>자동차센서 2인 프로젝트 과정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap">
+<style>
+  :root{
+    --ground:#F1F4F8;
+    --surface:#FFFFFF;
+    --surface-2:#E9EDF3;
+    --ink:#141922;
+    --ink-soft:#4E5867;
+    --ink-faint:#7A8496;
+    --rule:#D3DAE4;
+    --rule-soft:#E3E8EF;
+    --accent:#1B4A8C;
+    --accent-soft:#E3ECF8;
+    --signal:#B0620F;
+    --signal-soft:#F7EBDC;
+    --s-cam:#2E71B0;
+    --s-usn:#42875D;
+    --s-rad:#B0620F;
+    --s-lid:#7A50B5;
+    --s-gnss:#B14C6E;
+    --s-imu:#2F7F84;
+    --shadow:0 1px 2px rgba(20,25,34,.05), 0 8px 24px -12px rgba(20,25,34,.18);
+    --measure:68ch;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#0E1218;
+      --surface:#151A22;
+      --surface-2:#1C222C;
+      --ink:#E7EBF2;
+      --ink-soft:#9BA5B5;
+      --ink-faint:#727D8D;
+      --rule:#28303B;
+      --rule-soft:#1F262F;
+      --accent:#7AA9E8;
+      --accent-soft:#18263A;
+      --signal:#E0994D;
+      --signal-soft:#2B2015;
+      --s-cam:#63A6DE;
+      --s-usn:#6FBE8E;
+      --s-rad:#E0994D;
+      --s-lid:#A98AE0;
+      --s-gnss:#E0839F;
+      --s-imu:#5FB6BB;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0E1218;
+    --surface:#151A22;
+    --surface-2:#1C222C;
+    --ink:#E7EBF2;
+    --ink-soft:#9BA5B5;
+    --ink-faint:#727D8D;
+    --rule:#28303B;
+    --rule-soft:#1F262F;
+    --accent:#7AA9E8;
+    --accent-soft:#18263A;
+    --signal:#E0994D;
+    --signal-soft:#2B2015;
+    --s-cam:#63A6DE;
+    --s-usn:#6FBE8E;
+    --s-rad:#E0994D;
+    --s-lid:#A98AE0;
+    --s-gnss:#E0839F;
+    --s-imu:#5FB6BB;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    font-weight:400;
+    font-size:15.5px;
+    line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+    word-break:keep-all;
+  }
+  .page{max-width:920px;margin:0 auto;padding:0 28px 96px}
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    border-bottom:2px solid var(--ink);
+    padding:56px 0 22px;
+    margin-bottom:0;
+  }
+  .kicker{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--signal);
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    margin-bottom:18px;
+  }
+  .kicker .sep{color:var(--rule);}
+  h1{
+    font-size:clamp(30px,5.4vw,46px);
+    font-weight:700;line-height:1.18;letter-spacing:-.02em;
+    margin:0 0 14px;text-wrap:balance;
+  }
+  .standfirst{
+    font-size:17px;color:var(--ink-soft);font-weight:300;
+    max-width:var(--measure);margin:0 0 26px;
+  }
+  .spec{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+    gap:1px;background:var(--rule);
+    border:1px solid var(--rule);
+  }
+  .spec div{background:var(--ground);padding:11px 14px}
+  .spec dt{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--ink-faint);margin:0 0 3px;
+  }
+  .spec dd{margin:0;font-size:14.5px;font-weight:500;font-variant-numeric:tabular-nums}
+  .spec dd.hi{color:var(--signal);font-weight:600}
+
+  /* ---------- sections ---------- */
+  section{padding-top:52px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+  .sec-num{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;font-weight:600;color:var(--accent);
+    letter-spacing:.06em;padding-top:5px;
+  }
+  h2{
+    font-size:23px;font-weight:600;letter-spacing:-.015em;margin:0;
+    text-wrap:balance;
+  }
+  h3{
+    font-size:16px;font-weight:600;margin:34px 0 10px;letter-spacing:-.005em;
+  }
+  h3 .mono-tag{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;color:var(--ink-faint);font-weight:500;
+    letter-spacing:.08em;margin-right:8px;
+  }
+  .sec-rule{height:1px;background:var(--rule);margin:14px 0 22px}
+  p{margin:0 0 15px;max-width:var(--measure)}
+  ul,ol{margin:0 0 15px;padding-left:20px;max-width:var(--measure)}
+  li{margin-bottom:7px}
+  strong{font-weight:600}
+  em{font-style:normal;color:var(--signal);font-weight:500}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--rule)}
+  a:hover{border-bottom-color:var(--accent)}
+  a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+  code,.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.88em}
+  code{background:var(--surface-2);padding:1px 5px;border-radius:3px;color:var(--ink-soft)}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto;margin:0 0 18px;border:1px solid var(--rule);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:14px}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule-soft);vertical-align:top;line-height:1.6}
+  thead th{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;
+    color:var(--ink-faint);font-weight:500;
+    background:var(--surface-2);border-bottom:1px solid var(--rule);
+    white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:none}
+  td.wk{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-variant-numeric:tabular-nums;font-weight:600;
+    color:var(--ink-faint);width:1%;white-space:nowrap;text-align:right;
+  }
+  th.rowh,td.rowh{font-weight:600;white-space:nowrap;width:1%}
+  tr.ms td{background:var(--signal-soft)}
+  tr.ms td.wk{color:var(--signal);box-shadow:inset 3px 0 0 var(--signal)}
+  tr.exam td{background:var(--accent-soft)}
+  tr.exam td.wk{color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+  .tag{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;font-weight:600;letter-spacing:.04em;
+    color:var(--signal);white-space:nowrap;
+  }
+  .tag.ex{color:var(--accent)}
+  .col-a{background:var(--surface-2)}
+
+  /* ---------- sensor chips ---------- */
+  .chip{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .dot{width:8px;height:8px;border-radius:50%;flex:none;display:inline-block}
+  .d-cam{background:var(--s-cam)} .d-usn{background:var(--s-usn)}
+  .d-rad{background:var(--s-rad)} .d-lid{background:var(--s-lid)}
+  .d-gnss{background:var(--s-gnss)} .d-imu{background:var(--s-imu)}
+
+  /* ---------- role split ---------- */
+  .roles{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+  .role{border:1px solid var(--rule);background:var(--surface);padding:18px 20px 20px;box-shadow:var(--shadow)}
+  .role .who{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-faint);
+  }
+  .role h4{font-size:16px;font-weight:600;margin:4px 0 12px}
+  .role .sensors{display:flex;flex-wrap:wrap;gap:8px 14px;margin-bottom:13px;font-size:13px;color:var(--ink-soft)}
+  .role p{font-size:13.5px;color:var(--ink-soft);margin:0 0 11px}
+  .role .topics{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11.5px;color:var(--ink-faint);line-height:1.9;
+    border-top:1px solid var(--rule-soft);padding-top:10px;
+    overflow-wrap:anywhere;
+  }
+
+  /* ---------- milestones ---------- */
+  .ms-list{display:grid;gap:0;border:1px solid var(--rule);background:var(--surface)}
+  .ms-item{display:grid;grid-template-columns:78px 1fr;gap:18px;padding:16px 20px;border-bottom:1px solid var(--rule-soft)}
+  .ms-item:last-child{border-bottom:none}
+  .ms-id{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:17px;font-weight:600;color:var(--signal);line-height:1.3;
+  }
+  .ms-when{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:10.5px;color:var(--ink-faint);letter-spacing:.08em;display:block;font-weight:500;
+  }
+  .ms-item h4{margin:0 0 5px;font-size:15px;font-weight:600}
+  .ms-item p{margin:0;font-size:13.5px;color:var(--ink-soft);max-width:none}
+
+  /* ---------- callout ---------- */
+  .callout{
+    border-left:3px solid var(--signal);
+    background:var(--signal-soft);
+    padding:15px 20px;margin:0 0 18px;
+  }
+  .callout p{margin:0;max-width:none;font-size:14px}
+  .callout p+p{margin-top:9px}
+  .note{
+    border-left:3px solid var(--rule);
+    padding:2px 0 2px 16px;margin:0 0 18px;
+    font-size:13.5px;color:var(--ink-soft);
+  }
+  .note p{margin:0;max-width:none}
+
+  /* ---------- schedule (session shape) ---------- */
+  .slots{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:20px}
+  .slot{background:var(--surface);padding:15px 17px}
+  .slot .t{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;
+    display:block;margin-bottom:6px;
+  }
+  .slot .n{font-weight:600;font-size:14.5px;display:block;margin-bottom:4px}
+  .slot .d{font-size:13px;color:var(--ink-soft);line-height:1.6}
+
+  /* ---------- grading ---------- */
+  .bar{display:flex;height:34px;border:1px solid var(--rule);margin-bottom:12px;overflow:hidden}
+  .bar span{
+    display:flex;align-items:center;justify-content:center;
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11.5px;font-weight:600;color:#fff;
+    font-variant-numeric:tabular-nums;
+  }
+  .b1{flex:50;background:var(--signal)}
+  .b2{flex:20;background:var(--accent)}
+  .b3{flex:20;background:var(--s-imu)}
+  .b4{flex:10;background:var(--ink-faint)}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--ink-soft);margin-bottom:20px}
+  .legend .chip strong{color:var(--ink)}
+  .sw{width:11px;height:11px;flex:none;display:inline-block}
+  .sw1{background:var(--signal)} .sw2{background:var(--accent)}
+  .sw3{background:var(--s-imu)} .sw4{background:var(--ink-faint)}
+
+  /* ---------- prep ---------- */
+  .prep{display:grid;gap:0;border:1px solid var(--rule);background:var(--surface);margin-bottom:18px}
+  .prep li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:13px 20px;border-bottom:1px solid var(--rule-soft);margin:0;max-width:none}
+  .prep li:last-child{border-bottom:none}
+  .prep .n{
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12px;font-weight:600;color:var(--accent);padding-top:3px;
+  }
+  .prep b{display:block;font-weight:600;font-size:14.5px;margin-bottom:2px}
+  .prep span.desc{font-size:13.5px;color:var(--ink-soft);line-height:1.65}
+  ol.prep{list-style:none;padding-left:0}
+
+  .paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .path{background:var(--surface);padding:16px 18px}
+  .path b{display:block;font-size:14.5px;font-weight:600;margin-bottom:5px}
+  .path span{font-size:13px;color:var(--ink-soft);line-height:1.6}
+
+  footer{
+    margin-top:64px;padding-top:20px;border-top:1px solid var(--rule);
+    font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:11px;color:var(--ink-faint);letter-spacing:.04em;line-height:1.9;
+  }
+
+  @media (max-width:720px){
+    .page{padding:0 18px 72px}
+    .roles{grid-template-columns:1fr}
+    .slots{grid-template-columns:1fr}
+    .ms-item{grid-template-columns:1fr;gap:6px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+  @media print{
+    body{background:#fff;font-size:10.5pt}
+    .page{max-width:none;padding:0}
+    section{padding-top:26px;break-inside:avoid}
+    .tw,.roles,.ms-list,.slots,.prep,.paths{break-inside:avoid}
+    .masthead{padding-top:0}
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div class="kicker">
+      <span>영남대학교 자동차소프트웨어학과</span>
+      <span class="sep">/</span>
+      <span>2026학년도 2학기</span>
+    </div>
+    <h1>자동차센서 — 2인 프로젝트 과정</h1>
+    <p class="standfirst">수강 인원 2명. 강의를 듣는 과목이 아니라, 센서 6종을 통합한 자율주행 차량 한 대를 학기 동안 실제로 만들어 굴리는 과목으로 운영합니다.</p>
+    <dl class="spec">
+      <div><dt>편성</dt><dd>3-2 전공선택</dd></div>
+      <div><dt>학점 / 시수</dt><dd>3학점 · 주 3시간</dd></div>
+      <div><dt>수강 인원</dt><dd class="hi">2명</dd></div>
+      <div><dt>운영 형태</dt><dd class="hi">프로젝트 기반</dd></div>
+      <div><dt>플랫폼</dt><dd>TOPST D3-G</dd></div>
+      <div><dt>다루는 센서</dt><dd>6종</dd></div>
+    </dl>
+  </header>
+
+  <section id="s0">
+    <div class="sec-head"><span class="sec-num">00</span><h2>먼저, 2명이라서 좋은 점</h2></div>
+    <div class="sec-rule"></div>
+    <p>이 과목은 원래 20명 기준으로 설계되어 있었습니다. 그 계획대로였다면 여러분은 4명이 보드 한 대를 나눠 쓰고, 수업 시간의 대부분을 <strong>옆 사람이 실습하는 것을 지켜보며</strong> 보냈을 것입니다. 2명이면 다음이 가능해집니다.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th></th><th>20명 편성 (원안)</th><th>2명 편성 (이 계획)</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">장비</td><td>조당 1세트를 4명이 공유</td><td class="col-a"><strong>1인 1세트 + 프로젝트 차량 1대 전용</strong></td></tr>
+          <tr><td class="rowh">레이더 실습</td><td>수천 원짜리 도플러 모듈까지. 차량용 FMCW 레이더는 교수 시연만</td><td class="col-a"><strong>TI IWR6843 mmWave 레이더 실물 실습</strong> — 20명 예산으로는 불가능했던 것</td></tr>
+          <tr><td class="rowh">결과물</td><td>개인 과제 리포트 4편</td><td class="col-a"><strong>실제로 굴러가는 자율주행 차량 1대</strong>와 본인이 만든 서브시스템</td></tr>
+          <tr><td class="rowh">피드백</td><td>학기당 몇 번</td><td class="col-a"><strong>매주 대면 랩미팅, 랩노트 전량 첨삭</strong></td></tr>
+          <tr><td class="rowh">난이도</td><td>전원이 따라올 수 있는 수준으로 하향</td><td class="col-a"><strong>막히면 그 자리에서 같이 뚫는다는 전제로 상향</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <p>대신 조건이 하나 붙습니다. <strong>2명이므로 숨을 곳이 없습니다.</strong> 매주 무엇을 했는지 기록하고 설명해야 하고, 한 명이 멈추면 프로젝트 전체가 멈춥니다. 이 계획서는 그 전제 위에 쓰였습니다.</p>
+    </div>
+  </section>
+
+  <section id="s1">
+    <div class="sec-head"><span class="sec-num">01</span><h2>과목이 다루는 범위</h2></div>
+    <div class="sec-rule"></div>
+    <p>자율주행과 ADAS는 사람의 눈을 대신하는 <strong>센서</strong>에서 출발합니다. 이 과목은 차량 환경인식 센서 6종의 동작 원리, 사양(스펙) 해석, 인터페이스와 데이터 취득 방법을 다룹니다.</p>
+    <div class="legend" style="margin-bottom:22px">
+      <span class="chip"><i class="dot d-cam"></i><strong>카메라</strong></span>
+      <span class="chip"><i class="dot d-usn"></i><strong>초음파</strong></span>
+      <span class="chip"><i class="dot d-rad"></i><strong>레이더</strong></span>
+      <span class="chip"><i class="dot d-lid"></i><strong>라이다</strong></span>
+      <span class="chip"><i class="dot d-gnss"></i><strong>GNSS</strong></span>
+      <span class="chip"><i class="dot d-imu"></i><strong>IMU</strong></span>
+    </div>
+    <p>경계는 분명합니다. 이 과목은 <em>"센서가 어떤 물리 원리로 세상을 측정하고, 그 데이터가 어떤 형태로 소프트웨어에 도달하는가"</em>까지입니다. 그 데이터를 처리하는 알고리즘은 후속 과목의 몫입니다.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>내용</th><th>담당 과목</th></tr></thead>
+        <tbody>
+          <tr><td>센서 원리 · 사양 · 인터페이스 · 데이터 취득</td><td class="col-a"><strong>자동차센서 (이 과목, 3-2)</strong></td></tr>
+          <tr><td>CNN/RNN 등 학습 알고리즘</td><td>딥러닝 (3-2, 병행 권장)</td></tr>
+          <tr><td>2D 영상 · 3D 포인트클라우드 신호처리, 객체인식</td><td>자동차비전 (4-1)</td></tr>
+          <tr><td>센서퓨전 심화, 항법 · 환경인식 · 제어</td><td>자율주행 (4-2)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="mono-tag">OUTCOME</span>이수 후 할 수 있게 되는 것</h3>
+    <ol>
+      <li>6종 센서의 동작 원리를 물리 수준에서 설명하고, 데이터시트의 주요 사양(해상도 · FOV · 분해능 · 검출거리)을 해석한다.</li>
+      <li>임베디드 보드에서 GPIO · I2C · UART · MIPI-CSI/V4L2 · GStreamer로 <strong>센서를 직접 연결하고 데이터를 취득한다.</strong></li>
+      <li>카메라 캘리브레이션을 수행하고 내부/외부 파라미터와 왜곡 모델을 설명한다.</li>
+      <li>실차 공개 데이터셋(KITTI, nuScenes)의 카메라 · 라이다 · 레이더 데이터를 읽고 시각화 · 기초 분석한다.</li>
+      <li>센서별 강점과 한계(조도 · 날씨 · 거리 · 해상도)를 비교하고 센서퓨전이 필요한 이유를 설명한다.</li>
+      <li><strong>여러 센서를 하나의 실시간 시스템으로 통합하고, 그것이 움직이는 차량 위에서 동작하게 만든다.</strong> <span style="color:var(--ink-faint);font-size:13px">← 2명 편성에서 추가된 목표</span></li>
+    </ol>
+  </section>
+
+  <section id="s2">
+    <div class="sec-head"><span class="sec-num">02</span><h2>학기 프로젝트 — 센서 통합 자율주행 미니카</h2></div>
+    <div class="sec-rule"></div>
+
+    <h3><span class="mono-tag">PLATFORM</span>플랫폼</h3>
+    <p><strong>TOPST D3-G</strong>(텔레칩스 TCC8050, 국산 차량용 반도체) + <strong>PiRacer 섀시</strong> 기반의 1/10 스케일 자율주행 차량 <strong>1대를 두 사람이 공동으로 구축</strong>합니다. 소프트웨어는 Ubuntu 22.04 + <strong>ROS2 Humble</strong>. 센서마다 ROS2 노드를 만들고 토픽으로 데이터를 주고받는 구조로, 실제 자율주행 소프트웨어 스택과 같은 방식입니다.</p>
+    <div class="note"><p>이 플랫폼(D-Racer)은 2026 SEA:ME 해커톤(폭스바겐그룹코리아 후원, 국민대 주관)의 공식 플랫폼입니다. 학기 결과물을 그대로 대회 출전이나 캡스톤디자인으로 이어갈 수 있습니다.</p></div>
+    <p><strong>진행 순서는 "차를 먼저 굴리고, 센서를 하나씩 얹는다"입니다.</strong> 기초 이론 2주 → 카메라로 차를 굴린다(3~6주) → 라이다를 얹는다(7~9주) → 레이더를 얹는다(10~12주) → 통합(13~15주). 센서를 하나 얹을 때마다 <em>원리 → 연결 · 취득 → 차량 기능화 → 시연 · 기록</em> 네 단계를 반복합니다.</p>
+
+    <h3><span class="mono-tag">DEMO</span>최종 시연 시나리오 · 15주차</h3>
+    <p>실내 트랙에서 차량이 다음을 수행합니다.</p>
+    <div class="tw">
+      <table>
+        <tbody>
+          <tr><td class="wk">1</td><td class="rowh"><span class="chip"><i class="dot d-cam"></i>카메라</span></td><td>차선 인식 기반 자율 주행 — 트랙 1바퀴 완주</td></tr>
+          <tr><td class="wk">2</td><td class="rowh"><span class="chip"><i class="dot d-usn"></i>초음파</span> <span class="chip"><i class="dot d-lid"></i>라이다</span></td><td>전방 장애물 감지 후 정지 · 회피 — 긴급제동(AEB)의 축소판</td></tr>
+          <tr><td class="wk">3</td><td class="rowh"><span class="chip"><i class="dot d-rad"></i>레이더</span></td><td>도플러 효과로 접근 물체의 속도 측정</td></tr>
+          <tr><td class="wk">4</td><td class="rowh"><span class="chip"><i class="dot d-gnss"></i>GNSS</span> <span class="chip"><i class="dot d-imu"></i>IMU</span></td><td>주행 궤적 로깅 및 사후 시각화</td></tr>
+          <tr><td class="wk">5</td><td class="rowh">전 센서</td><td>6종 데이터를 ROS2 토픽으로 실시간 통합 · 대시보드 표시</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="mono-tag">ROLES</span>역할 분담</h3>
+    <p>공동 플랫폼 1대에 대해 각자 <strong>담당 서브시스템</strong>을 갖습니다. 담당은 "프로젝트에서 책임지는 범위"이지, <strong>배우는 범위가 아닙니다.</strong> 이론 수업과 중간시험은 6종 센서 전체를 대상으로 하며, 두 사람 모두 전 센서를 학습합니다.</p>
+    <div class="roles">
+      <div class="role">
+        <span class="who">Student A</span>
+        <h4>인지 · 비전</h4>
+        <div class="sensors">
+          <span class="chip"><i class="dot d-cam"></i>MIPI-CSI 카메라</span>
+          <span class="chip"><i class="dot d-cam"></i>USB 웹캠</span>
+        </div>
+        <p>V4L2/GStreamer 영상 파이프라인, 카메라 캘리브레이션, 차선 검출(Canny + Hough), 조향각 산출</p>
+        <div class="topics">/camera/image_raw<br>/lane/steering_angle</div>
+      </div>
+      <div class="role">
+        <span class="who">Student B</span>
+        <h4>측거 · 측위</h4>
+        <div class="sensors">
+          <span class="chip"><i class="dot d-usn"></i>초음파</span>
+          <span class="chip"><i class="dot d-rad"></i>레이더</span>
+          <span class="chip"><i class="dot d-lid"></i>2D 라이다</span>
+          <span class="chip"><i class="dot d-gnss"></i>GNSS</span>
+          <span class="chip"><i class="dot d-imu"></i>IMU</span>
+        </div>
+        <p>GPIO ToF 거리 측정, 도플러 속도 산출, 라이다 스캔 · 장애물 클러스터링, NMEA 파싱, I2C IMU, 1D 칼만필터</p>
+        <div class="topics">/ultrasonic/range · /scan<br>/radar/speed · /gps/fix · /imu/data</div>
+      </div>
+    </div>
+    <p><strong>공통 담당</strong>은 시스템 아키텍처 설계, 차량 제어(모터 · 서보) 노드, 통합, 대시보드, 최종 시연입니다.</p>
+    <div class="callout">
+      <p><strong>상호 교육이 평가 항목입니다.</strong> 매주 랩미팅에서 각자 자기 담당 진행을 상대에게 설명하고, 8주차 직전과 14주차에 <strong>상대 담당 센서에 대한 구술 확인</strong>을 받습니다. 2명뿐이므로 서로가 서로의 유일한 청중이자 검증자입니다.</p>
+    </div>
+
+    <h3><span class="mono-tag">MILESTONES</span>마일스톤 4회</h3>
+    <div class="ms-list">
+      <div class="ms-item">
+        <div><span class="ms-id">M1</span><span class="ms-when">4주 말</span></div>
+        <div><h4>플랫폼 기동</h4><p>D3-G 부팅 + ROS2 노드 간 통신 확인, 모터 · 서보 원격 제어로 직선 3 m 주행, CSI 카메라 영상 스트리밍 확인</p></div>
+      </div>
+      <div class="ms-item">
+        <div><span class="ms-id">M2</span><span class="ms-when">6주 말</span></div>
+        <div><h4>카메라 자율주행</h4><p>차선 검출 기반으로 트랙(직선 + 완만한 곡선) 1바퀴 자율 주행, 전방 30 cm 내 초음파 감지 시 정지</p></div>
+      </div>
+      <div class="ms-item">
+        <div><span class="ms-id">M3</span><span class="ms-when">9주 말</span></div>
+        <div><h4>라이다 통합</h4><p>2D 라이다로 전방 장애물의 거리 · 각도 검출 후 <strong>정지가 아닌 감속 또는 회피</strong> 동작, 카메라 주행과 충돌 없이 동작</p></div>
+      </div>
+      <div class="ms-item">
+        <div><span class="ms-id">M4</span><span class="ms-when">12주 말</span></div>
+        <div><h4>레이더 통합</h4><p>도플러 속도 측정 로그 확보, 접근 물체 경고 동작, 카메라 · 라이다 · 레이더 토픽 동시 발행</p></div>
+      </div>
+    </div>
+    <p style="font-size:13.5px;color:var(--ink-soft)">최종 시연(15주)은 여기에 초음파 · IMU까지 더한 <strong>6종 센서 동시 발행 + 주행 로그(rosbag) + 대시보드</strong>의 통합 상태를 기준으로 합니다.</p>
+    <div class="callout">
+      <p><strong>마일스톤은 성공/실패로 채점하지 않습니다.</strong> 도달하려고 한 과정과 그 기록으로 평가합니다. 실패한 시도라도 랩노트에 원인 분석과 다음 가설이 남아 있으면 만점이 가능합니다.</p>
+      <p>하드웨어 프로젝트는 원래 절반이 실패합니다. 감추지 말고 기록하십시오.</p>
+    </div>
+  </section>
+
+  <section id="s3">
+    <div class="sec-head"><span class="sec-num">03</span><h2>수업 운영 방식</h2></div>
+    <div class="sec-rule"></div>
+
+    <h3><span class="mono-tag">SESSION</span>주 3시간 구성</h3>
+    <div class="slots">
+      <div class="slot"><span class="t">0:00 – 1:30</span><span class="n">강의 90분</span><span class="d">랩미팅 10분(각자 지난주 진행 · 막힌 곳 · 이번 주 계획) + 해당 주차 센서의 원리 · 사양 · 인터페이스 (두 사람 공통)</span></div>
+      <div class="slot"><span class="t">1:30 – 3:00</span><span class="n">실습 90분</span><span class="d">그 주의 센서를 연결 → 데이터 취득 → 차량 기능으로 통합. 교수 상주, 막히면 그 자리에서 함께 해결</span></div>
+    </div>
+
+    <h3><span class="mono-tag">LOGBOOK</span>주간 랩노트 · 평가 20%</h3>
+    <p>GitHub 저장소에 <strong>매주 Markdown으로 커밋</strong>합니다. 분량보다 성실성과 구체성으로 평가합니다.</p>
+    <ol class="prep">
+      <li><span class="n">01</span><span><b>이론 요약</b><span class="desc">이번 주 배운 것 3~5줄. 이해되지 않은 것은 그대로 적을 것</span></span></li>
+      <li><span class="n">02</span><span><b>진행 기록</b><span class="desc">한 것 / 막힌 것 / 시도한 해결책 / 다음 주 계획</span></span></li>
+      <li><span class="n">03</span><span><b>증거</b><span class="desc">측정 데이터, 그래프, 스크린샷, 오실로스코프 캡처, 실패 로그</span></span></li>
+      <li><span class="n">04</span><span><b>소스 코드</b><span class="desc">같은 저장소에 커밋</span></span></li>
+    </ol>
+    <p>이 저장소가 학기 말에 그대로 <strong>포트폴리오</strong>가 됩니다. 채용 · 대학원 · 해커톤에서 "무엇을 만들었는가"를 증명하는 것은 성적표가 아니라 이 기록입니다.</p>
+
+    <h3><span class="mono-tag">DATASET LAB</span>데이터셋 랩</h3>
+    <p>프로젝트 차량은 저가 센서를 씁니다. 차량급 센서(3D 라이다, 77 GHz 레이더)의 실제 데이터는 <strong>공개 실차 데이터셋으로 별도 경험</strong>합니다. 8주차 KITTI 라이다 포인트클라우드, 11주차 nuScenes 레이더 실습이 여기에 해당하며, 개인 노트북(Colab 가능)으로 수행합니다.</p>
+  </section>
+
+  <section id="s4">
+    <div class="sec-head"><span class="sec-num">04</span><h2>15주 계획</h2></div>
+    <div class="sec-rule"></div>
+    <p>기초 이론 2주 → <span class="chip"><i class="dot d-cam"></i>카메라</span>로 차를 굴린다 → <span class="chip"><i class="dot d-lid"></i>라이다</span>를 얹는다 → <span class="chip"><i class="dot d-rad"></i>레이더</span>를 얹는다 → 통합. 매주 강의 90분 + 실습 90분.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>주</th><th>이론 — 강의 90분</th><th>프로젝트 — 실습 90분</th><th>제출 · 점검</th></tr></thead>
+        <tbody>
+          <tr><td class="wk">1</td><td>오리엔테이션 · 자율주행 개념(인지-판단-제어, SAE 레벨, ADAS와 센서) · 임베디드 시스템과 차량 컴퓨팅 · 개발환경 개요</td><td>개발 PC 셋업(Ubuntu 22.04), GitHub 랩노트 저장소, SSH 키, 역할 논의</td><td>랩노트 #1</td></tr>
+          <tr><td class="wk">2</td><td>임베디드 리눅스 구조(부트로더 · 커널 · rootfs · 디바이스 트리) · ROS2 아키텍처(노드 · 토픽) · 센서 인터페이스 개관(GPIO/I2C/UART/CSI)</td><td><strong>D3-G 이미지 굽기 → 부팅 → SSH → ROS2 hello</strong> · 역할 확정, 시스템 아키텍처 초안</td><td>설계서</td></tr>
+          <tr><td class="wk">3</td><td><span class="chip"><i class="dot d-cam"></i>카메라 원리</span> — 이미지센서(CMOS · 베이어 · ISP), 렌즈 · 화각, 핀홀 모델 · MIPI-CSI와 V4L2</td><td>CSI 카메라 연결, GStreamer 파이프라인, 영상 토픽 발행 · PiRacer 섀시 조립</td><td></td></tr>
+          <tr class="ms"><td class="wk">4</td><td><span class="chip"><i class="dot d-cam"></i>카메라 캘리브레이션</span> — 내부 파라미터 · 왜곡 모델 · 차량 액추에이터(PWM, 서보 · DC 모터 드라이버)</td><td>체커보드 캘리브레이션 · 모터 · 서보 ROS2 노드 · 원격 주행</td><td><span class="tag">M1</span></td></tr>
+          <tr><td class="wk">5</td><td><span class="chip"><i class="dot d-cam"></i>영상처리 기초</span> — 색공간, Canny 엣지, Hough 직선, ROI · 차선 검출 파이프라인 설계</td><td>차선 검출 노드 → 조향각 산출 → 제어 노드 연결</td><td></td></tr>
+          <tr class="ms"><td class="wk">6</td><td>제어 루프 직관(비례 제어 · 지연 · 진동) · <span class="chip"><i class="dot d-usn"></i>초음파</span> ToF 원리와 GPIO 타이밍</td><td>차선 주행 튜닝 · HC-SR04 전방 정지</td><td><span class="tag">M2</span></td></tr>
+          <tr><td class="wk">7</td><td><span class="chip"><i class="dot d-lid"></i>라이다 원리</span> — 레이저 · ToF, 스캐닝 방식, 포인트클라우드 구조, 안전 등급 · 2D 라이다 사양 읽기</td><td>YDLIDAR 연결, ROS2 드라이버, <code>/scan</code> 시각화</td><td></td></tr>
+          <tr class="exam"><td class="wk">8</td><td><strong>중간 이론 점검(30분, 1~7주)</strong> · <span class="chip"><i class="dot d-lid"></i>포인트클라우드 처리</span> — 극좌표 변환, 클러스터링, 지면 분리 · 3D 라이다와 KITTI</td><td>장애물 감지 노드(거리 · 각도) · KITTI 랩</td><td><span class="tag ex">점검</span></td></tr>
+          <tr class="ms"><td class="wk">9</td><td>센서 좌표계와 외부 캘리브레이션(카메라-라이다 정렬) · 회피 행동 설계(정지 → 감속 → 조향)</td><td>라이다 기반 감속 · 회피 통합, 카메라 주행과 조정</td><td><span class="tag">M3</span></td></tr>
+          <tr><td class="wk">10</td><td><span class="chip"><i class="dot d-rad"></i>레이더 원리</span> — 전파 · 주파수 대역, 도플러 효과, CW vs FMCW, 처프 · 비트 주파수</td><td>HB100 도플러 모듈 속도 측정, IF 신호 관찰</td><td></td></tr>
+          <tr><td class="wk">11</td><td><span class="chip"><i class="dot d-rad"></i>레이더 신호처리</span> — Range-Doppler 맵(2D FFT), CFAR, 각도 추정 · 차량 레이더(SRR/LRR, ACC · AEB), 4D 이미징 레이더</td><td><strong>TI IWR6843 mmWave 실습</strong> · nuScenes 레이더 랩</td><td></td></tr>
+          <tr class="ms"><td class="wk">12</td><td>접근 경고 · AEB 로직 설계 · <span class="chip"><i class="dot d-imu"></i>IMU</span> <span class="chip"><i class="dot d-gnss"></i>GNSS</span> 개관(드리프트, 측위 오차)</td><td>레이더 접근 경고 통합 · IMU 로깅(선택)</td><td><span class="tag">M4</span></td></tr>
+          <tr><td class="wk">13</td><td>센서퓨전 개관 — 센서별 강점 · 한계, 칼만필터 직관(1D)</td><td>6종 토픽 동시 발행, rosbag 기록, 대시보드</td><td></td></tr>
+          <tr><td class="wk">14</td><td>시뮬레이터(CARLA) 개관 · 발표 구성법</td><td>통합 리허설 · 상대 담당 센서 구술 확인</td><td>리허설</td></tr>
+          <tr class="exam"><td class="wk">15</td><td colspan="2"><strong>최종 시연 · 발표 · 보고서</strong> — 트랙 주행 시연 → 발표 20분/인 → 질의</td><td><span class="tag ex">최종</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s5">
+    <div class="sec-head"><span class="sec-num">05</span><h2>평가</h2></div>
+    <div class="sec-rule"></div>
+    <div class="bar" role="img" aria-label="프로젝트 50%, 랩노트 20%, 중간 점검 20%, 참여 10%">
+      <span class="b1">프로젝트 50</span><span class="b2">랩노트 20</span><span class="b3">중간 점검 20</span><span class="b4">10</span>
+    </div>
+    <div class="legend">
+      <span class="chip"><i class="sw sw1"></i><strong>프로젝트 50%</strong> — 마일스톤 4회 20% + 최종 시연 20% + 최종 보고서 10%</span>
+      <span class="chip"><i class="sw sw2"></i><strong>주간 랩노트 20%</strong> — 14회 제출, 미제출 1회당 감점</span>
+      <span class="chip"><i class="sw sw3"></i><strong>중간 이론 점검 20%</strong> — 8주차 강의 앞 30분 필기, 1~7주 범위</span>
+      <span class="chip"><i class="sw sw4"></i><strong>참여 · 상호교육 10%</strong> — 랩미팅 브리핑, 구술 확인 2회</span>
+    </div>
+    <p>기말시험은 시행하지 않고 <strong>최종 시연 · 발표 · 보고서로 대체</strong>합니다.</p>
+    <p><strong>최종 보고서</strong>는 개인별 제출이며 다음을 포함합니다 — ① 시스템 전체 아키텍처, ② <strong>본인 담당 서브시스템</strong>의 센서 원리 · 사양 · 구현 · 측정 결과, ③ 실패와 원인 분석, ④ 센서별 한계 비교와 센서퓨전 필요성에 대한 본인의 결론, ⑤ 개선 방향.</p>
+  </section>
+
+  <section id="s6">
+    <div class="sec-head"><span class="sec-num">06</span><h2>장비와 교재</h2></div>
+    <div class="sec-rule"></div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>구분</th><th>품목</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">공동 — 프로젝트 차량</td><td>TOPST D3-G 1대, PiRacer 섀시, ArduCam OV5647 CSI 카메라, YDLIDAR X4 2D 라이다, 배터리 · 충전기</td></tr>
+          <tr><td class="rowh">개인 지급 — 1인 1세트</td><td>HC-SR04 초음파, MPU-6050 IMU, NEO-6M GPS, HB100 도플러 레이더 모듈, 브레드보드 · 점퍼 · 저항 키트, USB 웹캠, microSD</td></tr>
+          <tr><td class="rowh">실습실 공용</td><td>TI IWR6843ISK mmWave 레이더 평가보드, 체커보드, 오실로스코프, CARLA 구동용 GPU PC</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout">
+      <p>개인 지급 부품은 학기 중 자유롭게 가져가 실습할 수 있습니다. <strong>직접 태우고 부수는 것까지가 학습 범위입니다</strong> — 파손은 감점 사유가 아니며 예비 부품이 있습니다. 다만 어떻게 망가뜨렸는지는 랩노트에 기록하십시오.</p>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>구분</th><th>서지</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">주교재</td><td>정승환, 「자율주행 자동차공학」 2판, 골든벨, 2024 — PART 2 '인지 기술'</td></tr>
+          <tr><td class="rowh">부교재</td><td>행키 샤프리 저 / 김은도 외 역, 「자율주행차량 기술 입문」, 에이콘, 2021 — 2장 하드웨어–센서</td></tr>
+          <tr><td class="rowh">무료 자료</td><td>Yeong et al., <em style="color:inherit;font-style:italic;font-weight:400">Sensors</em> 21(6), 2021 (오픈액세스 리뷰) · TI mmWave Training Series · TOPST 공식 문서 · rlabbe, <em style="color:inherit;font-style:italic;font-weight:400">Kalman and Bayesian Filters in Python</em> · KITTI / nuScenes 데이터셋</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s7">
+    <div class="sec-head"><span class="sec-num">07</span><h2>첫 2주 안에 갖춰야 할 것</h2></div>
+    <div class="sec-rule"></div>
+    <p>1강 실습에서 개발 PC를 셋업하고, 2강에서 D3-G를 켭니다. <strong>그 전까지 아래가 갖춰져 있어야 3주차부터 카메라를 붙일 수 있습니다.</strong></p>
+
+    <h3><span class="mono-tag">COURSES</span>병행 과목</h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th></th><th>과목</th><th>이유</th></tr></thead>
+        <tbody>
+          <tr><td class="rowh">이미 이수했다면 유리</td><td>MCU프로그래밍 (2-2)<br>신호및선형시스템 (2-2)</td><td>GPIO · I2C · UART 경험과 주파수 개념이 있으면 3주 정도 앞서 출발합니다</td></tr>
+          <tr class="ms"><td class="rowh">병행 강력 권장</td><td><strong>임베디드시스템 (3-2)</strong></td><td>라즈베리파이 · 리눅스를 다룹니다. 이 과목의 D3-G 작업과 직접 연결됩니다</td></tr>
+          <tr><td class="rowh">병행 권장</td><td>딥러닝 (3-2)</td><td>5주차 영상처리, 8 · 11주차 데이터셋 실습과 맞물립니다</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="mono-tag">SELF-STUDY</span>자율 준비 · 1강 실습에서 시작</h3>
+    <p>우선순위 순입니다. <strong>1~3번은 2강 전까지 반드시</strong> 해 두십시오.</p>
+    <ol class="prep">
+      <li><span class="n">01</span><span><b>Python</b><span class="desc">numpy 배열 다루기, matplotlib 그래프. 문법을 외우기보다 "데이터를 읽어서 그림으로 그려보는 것"까지 가면 충분합니다</span></span></li>
+      <li><span class="n">02</span><span><b>Linux 명령줄</b><span class="desc"><code>cd</code> <code>ls</code> <code>apt</code> <code>ssh</code> <code>vim</code>(또는 nano), 파일 권한. 학기 내내 보드에 SSH로 붙어서 작업합니다</span></span></li>
+      <li><span class="n">03</span><span><b>Git / GitHub</b><span class="desc"><code>clone</code> <code>add</code> <code>commit</code> <code>push</code>, 브랜치 개념. 랩노트와 코드를 여기에 올립니다. 계정을 미리 만들어 두십시오</span></span></li>
+      <li><span class="n">04</span><span><b>OpenCV 맛보기</b><span class="desc">이미지 읽기, 그레이스케일 변환, Canny 엣지. 공식 튜토리얼 앞부분이면 됩니다</span></span></li>
+      <li><span class="n">05</span><span><b>ROS2 Humble 튜토리얼</b><span class="desc">공식 문서의 노드 · 토픽 파트만. 여유가 되면</span></span></li>
+    </ol>
+
+    <h3><span class="mono-tag">DECIDE</span>미리 생각해 둘 것</h3>
+    <p>1강 실습에서 <strong>역할(A: 인지 · 비전 / B: 측거 · 측위)을 논의하고 2강에 확정</strong>합니다. 어느 쪽에 끌리는지, 왜 그런지 생각해 두면 좋습니다. 둘 다 하고 싶다면 그것도 좋은 답입니다 — 학기 후반에는 서로의 코드를 건드리게 되어 있습니다.</p>
+  </section>
+
+  <section id="s8">
+    <div class="sec-head"><span class="sec-num">08</span><h2>이 과목이 끝난 뒤로 이어지는 길</h2></div>
+    <div class="sec-rule"></div>
+    <div class="paths">
+      <div class="path"><b>자동차비전 → 자율주행</b><span>4-1, 4-2. 이 과목에서 취득한 센서 데이터를 처리 · 융합하는 후속 과정</span></div>
+      <div class="path"><b>SEA:ME 해커톤</b><span>같은 D-Racer 플랫폼. 학기 결과물로 바로 출전 가능</span></div>
+      <div class="path"><b>캡스톤디자인 · 졸업작품</b><span>이 차량을 확장하는 방향이 가장 자연스럽습니다</span></div>
+      <div class="path"><b>포트폴리오</b><span>15주치 랩노트와 동작 영상이 담긴 GitHub 저장소 하나</span></div>
+    </div>
+  </section>
+
+  <footer>
+    자동차센서 (AUTOMOTIVE SENSOR) · 영남대학교 자동차소프트웨어학과 · 2026학년도 2학기<br>
+    2026-09 배포 · 세부 일정은 진행 상황에 따라 조정
+  </footer>
+
+</div>

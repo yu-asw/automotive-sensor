@@ -4,6 +4,7 @@ from pathlib import Path
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 import zipfile
@@ -26,6 +27,18 @@ inputs = {
 for path in inputs.values():
     if not path.is_file():
         raise SystemExit('Missing packaging input: ' + str(path))
+# Reject oversized inputs before invoking the vendor packager.
+for line in (work / 'tools/partition.single.list.d3').read_text().splitlines():
+    match = re.fullmatch(r'([^:]+):(\d+)([KMG])@(.+)', line.strip())
+    if not match:
+        raise SystemExit('Unsupported partition entry: ' + line)
+    partition, size, unit, filename = match.groups()
+    source = inputs.get(Path(filename).name)
+    if source is None:
+        raise SystemExit('Unknown partition input: ' + filename)
+    capacity = int(size) * 1024 ** {'K': 1, 'M': 2, 'G': 3}[unit]
+    if source.stat().st_size > capacity:
+        raise SystemExit('Image exceeds partition capacity: ' + partition)
 output = args.output.resolve()
 output.mkdir(parents=True, exist_ok=False)
 # The vendor script locates an SDK root by the .repo directory. This marker

@@ -23,6 +23,13 @@ if (build / 'conf').exists():
 (build / 'conf').mkdir(parents=True)
 for name in ('local.conf', 'bblayers.conf'):
     shutil.copy2(base / 'conf' / name, build / 'conf' / name)
+# local.conf is parsed after auto.conf. Enforce host limits after copied settings.
+with (build / 'conf/local.conf').open('a') as f:
+    f.write('\n# Course ROS build limits override the copied BSP host settings.\n'
+            'BB_NUMBER_THREADS = "1"\n'
+            'PARALLEL_MAKE = "-j 2"\n'
+            'PARALLEL_MAKE:pn-opencv = "-j 1"\n'
+            'PARALLEL_MAKE:pn-rust-llvm-native = "-j 1"\n')
 with (build / 'conf/bblayers.conf').open('a') as f:
     f.write('\nBBLAYERS += " ' + ' '.join(str(p) for p in (
         ros / 'meta-ros-common', ros / 'meta-ros2', ros / 'meta-ros2-humble',
@@ -30,9 +37,6 @@ with (build / 'conf/bblayers.conf').open('a') as f:
 (build / 'conf/auto.conf').write_text(f'''# Isolated ROS 2 test build; original configuration is unchanged.
 DL_DIR = "{base}/downloads"
 SSTATE_DIR = "{base}/sstate-cache"
-BB_NUMBER_THREADS = "2"
-PARALLEL_MAKE = "-j 2"
-PARALLEL_MAKE:pn-rust-llvm-native = "-j 2"
 # Preserve the BSP host tool chain; target zstd remains ROS-selected.
 PREFERRED_VERSION_zstd-native = "1.5.2"
 ROS_DISTRO = "humble"

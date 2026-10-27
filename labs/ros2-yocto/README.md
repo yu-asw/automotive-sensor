@@ -110,3 +110,5 @@ Follow the previous class's board-specific FWDN procedure only after the instruc
 | `package-fwdn.py` | Package the new image using existing TOPST tools |
 
 The repository does not include the vendor SDK, proprietary firmware, generated images or private network configuration. This retains the existing BSP's Kirkstone release. The [meta-ros Kirkstone branch](https://github.com/ros/meta-ros/tree/kirkstone) is unsupported. General source-location fixes live in [hulryung/poky](https://github.com/hulryung/poky) and [hulryung/meta-openembedded](https://github.com/hulryung/meta-openembedded).
+
+Detailed build, packaging and board flashing steps: [튜토리얼 (한국어)](TUTORIAL.ko.md).

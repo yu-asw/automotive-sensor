@@ -307,3 +307,91 @@ QEMU 결과만으로 원인을 보드 이미지 문제나 에뮬레이션 문제
 `9f62fdb9cc236f49f2f36e26b28f760d834a9232bbf4d6ffaa63f7fe930943dd`
 
 이 해시는 이번 산출물의 식별값이며 학생이 재빌드한 이미지의 해시가 같아야 한다는 뜻은 아니다.
+
+## 16. USB 카메라 실습 — 실제 장비에서 진행
+
+### 준비
+
+보드의 talker/listener 수신을 먼저 확인한다. PC에는 ROS 2 Humble과 `rqt_image_view`가 준비되어 있어야 한다. PC의 ROS 환경은 `/opt/ros/humble/setup.bash`, 이 Yocto 보드의 환경은 `/opt/ros/humble/local_setup.sh`로 설정한다. GUI 뷰어는 PC에서 실행한다.
+
+PC와 보드의 각 터미널에서 팀별로 배정받은 동일한 `ROS_DOMAIN_ID`와 `RMW_IMPLEMENTATION=rmw_fastrtps_cpp`, `ROS_LOCALHOST_ONLY=0`을 설정한다. 예제 domain ID는 10이다. VPN이나 ping 성공만으로 DDS 검색·데이터 통신이 보장되지는 않는다.
+
+### A. 장치와 지원 포맷 확인 — D3 보드
+
+```bash
+lsusb
+v4l2-ctl --list-devices
+v4l2-ctl -d /dev/video0 --all
+v4l2-ctl -d /dev/video0 --list-formats-ext
+```
+
+`/dev/video0`은 예시다. 실제 캡처 노드를 찾아 바꾼다. 카메라 하나가 여러 노드를 만들 수 있다.
+이번 `v4l2_camera 0.6.2`는 YUYV, UYVY, GREY 입력을 지원한다. MJPEG만 지원하는 모드를 이 예제에 그대로 적용하지 않는다.
+아래 명령은 **YUYV 640×480을 지원한다고 확인한 경우**에만 사용한다.
+
+### B. ROS 없이 캡처 — D3 보드
+
+```bash
+v4l2-ctl -d /dev/video0 \
+  --set-fmt-video=width=640,height=480,pixelformat=YUYV \
+  --stream-mmap --stream-count=30 \
+  --stream-to=/tmp/camera-test.yuyv
+```
+
+종료 상태와 캡처 로그를 기록한다. 파일은 raw 프레임이며 MP4가 아니다. 파일 크기만으로 영상이 정상이라고 판정하지 않는다. 캡처 도구가 종료된 뒤 ROS 노드를 시작한다.
+
+### C. ROS 카메라 노드 — D3 보드
+
+```bash
+. /opt/ros/humble/local_setup.sh
+export ROS_DOMAIN_ID=10
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+export ROS_LOCALHOST_ONLY=0
+ros2 run v4l2_camera v4l2_camera_node --ros-args \
+  -r __ns:=/camera \
+  -p video_device:=/dev/video0 \
+  -p pixel_format:=YUYV \
+  -p 'image_size:=[640,480]'
+```
+
+시작 로그에서 협상된 포맷과 오류를 확인한다. 두 번째 보드 터미널에서도 같은 ROS 환경을 설정하고 실행한다.
+
+```bash
+ros2 node list
+ros2 topic list -t
+ros2 topic info /camera/image_raw --verbose
+ros2 topic hz /camera/image_raw
+```
+
+`topic hz`는 해당 구독자가 수신한 빈도다. 카메라 설정 FPS, 발행 빈도, 네트워크 수신 빈도, 뷰어 표시 FPS를 구분한다.
+
+### D. PC에서 보기
+
+```bash
+source /opt/ros/humble/setup.bash
+export ROS_DOMAIN_ID=10
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+export ROS_LOCALHOST_ONLY=0
+ros2 run rqt_image_view rqt_image_view
+```
+
+`/camera/image_raw`를 선택한다. 영상이 없으면 USB 캡처 → 노드 로그 → 토픽 검색 → QoS 호환성 → 네트워크 순서로 확인한다. ROS 없이 캡처가 실패하면 domain ID 변경으로 해결되지 않는다.
+
+### E. 제출 기록
+
+| 항목 | 학생 기록 |
+|---|---|
+| 팀 / 날짜 / 학생 자료 커밋 | |
+| 이미지 파일명·SHA-256 / 보드 OS | |
+| FWDN 결과 / 부팅 결과 | |
+| talker/listener 수신 결과 | |
+| 카메라 모델 / 실제 video 노드 | |
+| FOURCC / 해상도 / 지원 frame interval | |
+| ROS domain / 이미지 토픽 / publisher QoS | |
+| 관측 수신 빈도 / 측정 위치·시간 | |
+| PC 뷰어 화면 / 재실행 명령 | |
+| 한 가지 설정 변경과 결과 / 원상 복구 결과 | |
+
+실패하거나 장비가 없으면 상태와 로그를 그대로 기록한다. 관측하지 않은 FPS나 부팅 결과를 채워 넣지 않는다.
+
+참고: [고정된 v4l2_camera README](https://github.com/ros2-gbp/ros2_v4l2_camera-release/blob/f4ec7fe46f373de96948d4d17ed7407757fe8148/README.md), [ROS 2 Humble 문서](https://docs.ros.org/en/humble/).

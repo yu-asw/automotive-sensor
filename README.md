@@ -10,7 +10,7 @@
 | 경로 | 설명 |
 |---|---|
 | `lectures/NN/slides.html` | 회차별 슬라이드 (웹, ←/→ 키) |
-| `lectures/NN/slides.pdf` | 같은 슬라이드의 PDF |
+| `lectures/NN/automotive-sensor-LNN.pdf` | 같은 슬라이드의 PDF |
 | `docs/운영계획.md` · `.html` | 과정 운영 계획 (프로젝트, 마일스톤, 평가) |
 | `docs/수업진행계획.docx` | A4 2쪽 요약본 |
 
@@ -20,3 +20,7 @@
 
 Download and setup instructions: [labs/ros2-yocto](labs/ros2-yocto/README.md).
 The course scripts extend the existing D3 SDK. Complete the prerequisites before running `run-build.sh`.
+
+## ROS 2 on D3-G — Student workshop
+
+[Slides and tutorial](workshops/ros2-camera/README.md) · [Download student kit](downloads/ros2-d3g-student-kit.zip)

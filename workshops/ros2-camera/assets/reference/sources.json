@@ -1,0 +1,142 @@
+[
+  {
+    "file": "ros-nodes.gif",
+    "url": "https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/images/Nodes-TopicandService.gif",
+    "attribution": "ROS 2 documentation contributors",
+    "license": "CC BY 4.0",
+    "sha256": "7208a1969106283c9d2bc7077bf06f12bae34e678bac575e4dd94f583e2bf4ad",
+    "modification": "PDF uses frame 283 of the original animation",
+    "print_file": "ros-nodes.png"
+  },
+  {
+    "file": "ros-topics.gif",
+    "url": "https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/images/Topic-MultiplePublisherandMultipleSubscriber.gif",
+    "attribution": "ROS 2 documentation contributors",
+    "license": "CC BY 4.0",
+    "sha256": "0202230cdd1af6aba78ccdb6f1fa84532071c026bd4bec6853076d9580d698e1",
+    "modification": "PDF uses frame 221 of the original animation",
+    "print_file": "ros-topics.png"
+  },
+  {
+    "file": "ros-service.gif",
+    "url": "https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/images/Service-SingleServiceClient.gif",
+    "attribution": "ROS 2 documentation contributors",
+    "license": "CC BY 4.0",
+    "sha256": "e2e3306aea8ab47884e138ae980241f043554d5455de05d55aa08569d81e2bfc",
+    "modification": "PDF uses frame 142 of the original animation",
+    "print_file": "ros-service.png"
+  },
+  {
+    "file": "ros-action.gif",
+    "url": "https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/images/Action-SingleActionClient.gif",
+    "attribution": "ROS 2 documentation contributors",
+    "license": "CC BY 4.0",
+    "sha256": "fa0d42926cb7b3cad103211968cdd4c93a1c16833b4afa8925ca9b5152ad2483",
+    "modification": "PDF uses frame 376 of the original animation",
+    "print_file": "ros-action.png"
+  },
+  {
+    "file": "ros-graph.png",
+    "url": "https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/images/rqt_graph2.png",
+    "attribution": "ROS 2 documentation contributors",
+    "license": "CC BY 4.0",
+    "sha256": "8201d9c0841fdd4febe947f4bc26e0b0addaf8c2ed2bdbe9cec5567e3e474625",
+    "modification": "None"
+  },
+  {
+    "file": "ros-frames.png",
+    "url": "https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Concepts/images/ros2_tf2_frames.png",
+    "attribution": "ROS 2 documentation contributors",
+    "license": "CC BY 4.0",
+    "sha256": "0d43fe725bcf915ca6f0ae63a0fe2d9b69c0a8e8ea6395f97c4649ede5737a28",
+    "modification": "None"
+  },
+  {
+    "file": "aw-sensing.svg",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/sensing/image/overall-sensing-architecture.drawio.svg",
+    "attribution": "Autoware Foundation and documentation contributors",
+    "license": "Apache-2.0",
+    "sha256": "e4f006d5f17f646d20f6d48b7c03cd3057d695c63fb2f517008652ad6e233059",
+    "modification": "None"
+  },
+  {
+    "file": "aw-perception.svg",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/perception/image/high-level-perception-diagram.drawio.svg",
+    "attribution": "Autoware Foundation and documentation contributors",
+    "license": "Apache-2.0",
+    "sha256": "a79c5f7e400cdb5d4c1fa4a35c497aa9042efaac144c3a6bce7cf4d684302b3b",
+    "modification": "None"
+  },
+  {
+    "file": "aw-tracking.svg",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/perception/image/multi_object_tracking.drawio.svg",
+    "attribution": "Autoware Foundation and documentation contributors",
+    "license": "Apache-2.0",
+    "sha256": "413c55c576e1ca5c8fa13ba7ebc304b320852b5d276e8bb622ba5d82db1cf6fb",
+    "modification": "None"
+  },
+  {
+    "file": "aw-radar.svg",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/sensing/data-types/radar-data/reference-implementations/image/radar-communication.drawio.svg",
+    "attribution": "Autoware Foundation and documentation contributors",
+    "license": "Apache-2.0",
+    "sha256": "a388876a6b091508874f52c246e926834d7811a8547ffeb215f8127888bd151a",
+    "modification": "None"
+  },
+  {
+    "file": "aw-overview.svg",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/image/autoware-architecture-overview.drawio.svg",
+    "attribution": "Autoware Foundation and documentation contributors",
+    "license": "Apache-2.0",
+    "sha256": "315c1a70e27ce9943b1dd08d9836b2b046fe3f91f6e76f4f31062067eb9d79e1",
+    "modification": "None"
+  },
+  {
+    "file": "aw-vehicle.svg",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/control/image/vehicle-interface-hw-abstraction.drawio.svg",
+    "attribution": "Autoware Foundation and documentation contributors",
+    "license": "Apache-2.0",
+    "sha256": "592a5fb05aa63b4663f2397ec9b0285b0337ed6633d07d4d73c0deacbaa5ef30",
+    "modification": "None"
+  },
+  {
+    "file": "aw-calibration.png",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/tutorials/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/lidar-camera-calibration/images/interactive-calibrator-results.png",
+    "attribution": "Autoware Foundation and documentation contributors",
+    "license": "Apache-2.0",
+    "sha256": "8b197081a7cf72c22fd522981547d7e66d8b43d1fa6afa7c188b4b511e37f71c",
+    "modification": "None"
+  },
+  {
+    "file": "aw-pointcloud.png",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/tutorials/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/ground-lidar-calibration/images/after-ground-plane.png",
+    "attribution": "Autoware documentation contributors; product images retain vendor ownership",
+    "license": "Repository Apache-2.0; third-party product images used as attributed examples",
+    "modification": "None",
+    "sha256": "7f84a6825fe05dad1e317af51cff4e2d33e9afc0f1f278cc42d0e611ce86ea68"
+  },
+  {
+    "file": "aw-camera.png",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/reference-design/reference-hw/images/camera-tieriv.png",
+    "attribution": "Autoware documentation contributors; product images retain vendor ownership",
+    "license": "Repository Apache-2.0; third-party product images used as attributed examples",
+    "modification": "None",
+    "sha256": "a64cf2e689e10dcd028a52bac04430c32181a50a0d2b0aecefc80991acfca514"
+  },
+  {
+    "file": "aw-lidar-hardware.png",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/reference-design/reference-hw/images/lidar-ouster.png",
+    "attribution": "Autoware documentation contributors; product images retain vendor ownership",
+    "license": "Repository Apache-2.0; third-party product images used as attributed examples",
+    "modification": "None",
+    "sha256": "faefeb54389ef38d3c9873c1b6e2173f55fcb56aaeb7fea60ff738accadf0083"
+  },
+  {
+    "file": "aw-radar-hardware.png",
+    "url": "https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/reference-design/reference-hw/images/radar-continental.png",
+    "attribution": "Autoware documentation contributors; product images retain vendor ownership",
+    "license": "Repository Apache-2.0; third-party product images used as attributed examples",
+    "modification": "None",
+    "sha256": "f59fec809967649c59441b9cb8ec43462388d5e76e63facd1468e28e6a9ff3b7"
+  }
+]

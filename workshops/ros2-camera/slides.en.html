@@ -1,0 +1,474 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="pdf-name" content="automotive-sensor-workshop-ros2-camera-en"><title>ROS 2 on D3-G: Yocto and USB Camera</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"><style>
+:root{
+  --ground:#F1F4F8; --surface:#FFFFFF; --surface-2:#E9EDF3;
+  --ink:#141922; --ink-soft:#4E5867; --ink-faint:#7A8496;
+  --rule:#D3DAE4; --rule-soft:#E3E8EF;
+  --accent:#1B4A8C; --accent-soft:#E3ECF8;
+  --signal:#B0620F; --signal-soft:#F7EBDC;
+  --s-cam:#2E71B0; --s-usn:#42875D; --s-rad:#B0620F;
+  --s-lid:#7A50B5; --s-gnss:#B14C6E; --s-imu:#2F7F84;
+  --sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:#2A313B; color:var(--ink);
+  font-family:var(--sans); font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+
+/* ---------- deck / slide box ---------- */
+#deck{width:1280px}
+.slide{
+  position:relative; width:1280px; height:720px; overflow:hidden;
+  background:var(--ground); color:var(--ink);
+  padding:44px 64px 34px; display:flex; flex-direction:column;
+  -webkit-print-color-adjust:exact; print-color-adjust:exact;
+}
+.slide + .slide{margin-top:26px}
+
+/* ---------- header ---------- */
+.kick{
+  font-family:var(--mono); font-size:13px; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--signal);
+  display:flex; gap:12px; align-items:center; margin:0 0 12px;
+}
+.kick .sep{color:var(--rule)}
+.kick .n{color:var(--ink-faint)}
+h2{font-size:35px; font-weight:600; letter-spacing:-.02em; line-height:1.22; margin:0}
+.lede{
+  font-size:21px; font-weight:300; color:var(--ink-soft);
+  margin:11px 0 0; line-height:1.5; max-width:96ch;
+}
+.hrule{height:1px;background:var(--rule);margin:20px 0 0;flex:none}
+.body{flex:1 1 auto; min-height:0; padding-top:22px; display:flex; flex-direction:column; justify-content:center}
+.body.top{justify-content:flex-start}
+
+/* ---------- footer ---------- */
+.foot{
+  flex:none; display:flex; justify-content:space-between; align-items:baseline;
+  font-family:var(--mono); font-size:13px; letter-spacing:.09em;
+  color:var(--ink-faint); border-top:1px solid var(--rule);
+  padding-top:11px; margin-top:16px;
+}
+.foot .pg{font-variant-numeric:tabular-nums; font-weight:500}
+
+/* ---------- title slide ---------- */
+.slide.title{background:var(--ground); justify-content:center; padding:0 84px}
+.slide.title .course{
+  font-size:74px; font-weight:700; letter-spacing:-.035em; line-height:1; margin:0 0 20px;
+}
+.slide.title .sub{font-size:26px; font-weight:400; color:var(--ink); line-height:1.45; margin:0 0 10px; max-width:34ch}
+.slide.title .sub em{font-style:normal; color:var(--accent); font-weight:600}
+.slide.title .dept{font-size:19px; color:var(--ink-soft); font-weight:300; margin:26px 0 0}
+.slide.title .tag{
+  font-family:var(--mono); font-size:14px; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--signal); margin:0 0 26px;
+}
+.title-bar{position:absolute; left:0; top:0; bottom:0; width:16px; background:var(--accent)}
+.chipstrip{position:absolute; left:84px; bottom:64px; display:flex; gap:26px; align-items:center}
+.chipstrip span{display:flex; align-items:center; gap:8px; font-family:var(--mono); font-size:13px; color:var(--ink-soft); letter-spacing:.04em}
+.chipstrip i{width:11px;height:11px;border-radius:50%;display:block}
+.title-meta{position:absolute; right:84px; bottom:64px; text-align:right; font-family:var(--mono); font-size:13px; color:var(--ink-faint); line-height:1.9; letter-spacing:.06em}
+
+/* ---------- part divider ---------- */
+.slide.part{background:var(--accent); color:#fff; justify-content:center; padding:0 84px}
+.slide.part .pletter{
+  font-family:var(--mono); font-size:150px; font-weight:600; line-height:.9;
+  color:rgba(255,255,255,.26); margin:0 0 6px; letter-spacing:-.04em;
+}
+.slide.part h2{font-size:52px; color:#fff; font-weight:600; margin:0 0 20px}
+.slide.part .msg{
+  font-size:25px; font-weight:300; color:rgba(255,255,255,.9); line-height:1.5;
+  border-left:3px solid rgba(255,255,255,.55); padding-left:20px; max-width:60ch; margin:0;
+}
+.slide.part .ptime{
+  position:absolute; right:84px; top:64px; font-family:var(--mono);
+  font-size:15px; letter-spacing:.16em; color:rgba(255,255,255,.6);
+}
+.slide.part .pfoot{
+  position:absolute; left:84px; bottom:54px; font-family:var(--mono);
+  font-size:13px; letter-spacing:.12em; color:rgba(255,255,255,.5);
+}
+.slide.part .pfoot .pg{color:rgba(255,255,255,.75)}
+
+/* ---------- question slide ---------- */
+.slide.q{background:var(--surface)}
+.slide.q .qmark{
+  font-family:var(--mono); font-size:14px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--signal); margin:0 0 26px;
+}
+.slide.q .qtext{font-size:52px; font-weight:600; line-height:1.3; letter-spacing:-.025em; margin:0; max-width:24ch}
+.slide.q .qsub{font-size:21px; color:var(--ink-soft); font-weight:300; margin:30px 0 0; line-height:1.6; max-width:66ch}
+.slide.q .qrule{width:96px;height:3px;background:var(--signal);margin:0 0 26px}
+
+/* ---------- tables ---------- */
+table{border-collapse:collapse; width:100%; font-size:17.5px; background:var(--surface)}
+th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--rule-soft); vertical-align:top; line-height:1.5}
+thead th{
+  font-family:var(--mono); font-size:13px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-faint); font-weight:500; background:var(--surface-2);
+  border-bottom:1px solid var(--rule); white-space:nowrap; padding:9px 14px;
+}
+tbody tr:last-child td{border-bottom:none}
+table.framed{border:1px solid var(--rule)}
+td.rowh{font-weight:600; white-space:nowrap; width:1%}
+td.mono,.mono{font-family:var(--mono)}
+td.num{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap; color:var(--ink-faint); width:1%; text-align:right; font-weight:500}
+tr.hi td{background:var(--signal-soft)}
+tr.hi td.num{color:var(--signal); box-shadow:inset 3px 0 0 var(--signal)}
+tr.hia td{background:var(--accent-soft)}
+.tsmall{font-size:16.5px}
+.tsmall th,.tsmall td{padding:8px 13px}
+
+/* ---------- compact variant for dense slides ---------- */
+.slide.tight h2{font-size:32px}
+.slide.tight .lede{font-size:19.5px;margin-top:8px}
+.slide.tight .hrule{margin-top:14px}
+.slide.tight .body{padding-top:14px}
+.slide.tight th,.slide.tight td{padding-top:7px;padding-bottom:7px}
+.slide.tight .callout{padding:10px 16px;font-size:17.5px}
+.slide.tight .note{margin-top:10px;font-size:16px}
+.slide.tight .foot{margin-top:12px;padding-top:9px}
+.slide.tight .card{padding:14px 16px}
+.slide.tight .card p{font-size:17px}
+.slide.tight ul.plain li{margin-bottom:10px}
+.slide.tight .cols{gap:18px}
+
+/* ---------- generic bits ---------- */
+.cols{display:grid; gap:22px}
+.c2{grid-template-columns:1fr 1fr}
+.c3{grid-template-columns:1fr 1fr 1fr}
+.card{border:1px solid var(--rule); background:var(--surface); padding:18px 20px}
+.card h3{font-size:19px; font-weight:600; margin:0 0 10px; letter-spacing:-.01em}
+.card p{font-size:18px; color:var(--ink-soft); margin:0 0 8px; line-height:1.6}
+.card p:last-child{margin-bottom:0}
+.card .who{font-family:var(--mono); font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 4px}
+.card ul{margin:0; padding-left:19px}
+.card li{font-size:17.5px; color:var(--ink-soft); line-height:1.55; margin-bottom:6px}
+ul.plain{list-style:none; margin:0; padding:0}
+ul.plain li{font-size:20px; line-height:1.55; margin-bottom:13px; padding-left:26px; position:relative; color:var(--ink)}
+ul.plain li::before{content:""; position:absolute; left:0; top:11px; width:11px; height:2px; background:var(--signal)}
+ul.plain li b{font-weight:600}
+ul.plain li span{color:var(--ink-soft); font-weight:300}
+.mnum{font-family:var(--mono); color:var(--signal); font-weight:600}
+.note{font-size:16.5px; color:var(--ink-faint); line-height:1.6; margin:14px 0 0}
+.note code,code{font-family:var(--mono); font-size:.93em; background:var(--surface-2); padding:1px 6px; border-radius:3px; color:var(--ink-soft)}
+.src{font-family:var(--mono); font-size:13px; color:var(--ink-faint); letter-spacing:.02em; margin:10px 0 0; word-break:break-all}
+.callout{border-left:3px solid var(--signal); background:var(--signal-soft); padding:13px 18px; font-size:19px; line-height:1.55; color:var(--ink)}
+.callout.acc{border-left-color:var(--accent); background:var(--accent-soft)}
+.callout b{font-weight:600}
+.ph{
+  border:1px dashed var(--ink-faint); background:var(--surface-2);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:var(--ink-faint); font-family:var(--mono); font-size:15px; letter-spacing:.05em;
+  text-align:center; line-height:1.8; padding:16px;
+}
+.ph b{font-weight:500; font-size:16px; color:var(--ink-soft); display:block; margin-bottom:6px}
+.legend{display:flex; flex-wrap:wrap; gap:10px 22px; margin:0; padding:0; list-style:none}
+.legend li{display:flex; align-items:center; gap:8px; font-size:16.5px; color:var(--ink-soft)}
+.legend i{width:11px;height:11px;border-radius:50%;display:block;flex:none}
+.d-cam{background:var(--s-cam)} .d-usn{background:var(--s-usn)} .d-rad{background:var(--s-rad)}
+.d-lid{background:var(--s-lid)} .d-gnss{background:var(--s-gnss)} .d-imu{background:var(--s-imu)}
+svg{display:block; width:100%; height:auto}
+.fig{flex:1 1 auto; min-height:0; display:flex; align-items:center}
+.fig svg{max-height:100%}
+.stat{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--rule); border:1px solid var(--rule)}
+.stat div{background:var(--surface); padding:12px 16px}
+.stat dt{font-family:var(--mono); font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 4px}
+.stat dd{margin:0; font-size:19px; font-weight:600; font-variant-numeric:tabular-nums}
+.stat dd.hi{color:var(--signal)}
+
+/* ---------- notes (never printed, never affects layout) ---------- */
+aside.notes{display:none}
+#notepanel{
+  position:fixed; left:0; right:0; bottom:0; max-height:44vh; overflow:auto;
+  background:#141922; color:#E7EBF2; padding:18px 26px 22px;
+  font-family:var(--sans); font-size:15px; line-height:1.7;
+  border-top:2px solid var(--signal); z-index:40; display:none;
+}
+#notepanel.on{display:block}
+#notepanel h4{font-family:var(--mono); font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#E0994D; margin:0 0 8px; font-weight:500}
+#notepanel p{margin:0 0 8px; max-width:110ch}
+#notepanel .qq{color:#E0994D}
+#hud{
+  position:fixed; right:14px; bottom:12px; z-index:50;
+  font-family:var(--mono); font-size:13px; letter-spacing:.08em;
+  color:#E7EBF2; background:rgba(20,25,34,.82); padding:6px 12px; border-radius:3px;
+  font-variant-numeric:tabular-nums;
+}
+#help{
+  position:fixed; left:14px; bottom:12px; z-index:50;
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em;
+  color:rgba(231,235,242,.72); background:rgba(20,25,34,.72); padding:6px 12px; border-radius:3px;
+}
+
+/* ---------- screen presentation mode ---------- */
+@media screen{
+  body{min-height:100vh; display:flex; align-items:center; justify-content:center; overflow:hidden}
+  #deck{transform:scale(var(--scale,1)); transform-origin:center center}
+  .slide{display:none; box-shadow:0 18px 60px -20px rgba(0,0,0,.65)}
+  .slide.active{display:flex}
+  .slide + .slide{margin-top:0}
+}
+
+/* ---------- print ---------- */
+@page{size:1280px 720px; margin:0}
+@media print{
+  html,body{background:#fff; width:1280px; height:auto; overflow:visible}
+  body{display:block}
+  #deck{transform:none !important; width:1280px; margin:0}
+  .slide{display:flex !important; page-break-after:always; break-after:page; break-inside:avoid; page-break-inside:avoid; box-shadow:none; margin:0 !important}
+  .slide:last-child{page-break-after:auto; break-after:auto}
+  #hud,#help,#notepanel,aside.notes{display:none !important}
+}
+
+/* ---------- code blocks ---------- */
+pre.cmd{background:#141922;color:#E7EBF2;font-family:var(--mono);font-size:15px;line-height:1.72;
+  padding:14px 18px;margin:0;border-left:3px solid var(--signal);white-space:pre;overflow:hidden}
+pre.cmd .c{color:#8FA3BF}
+pre.cmd .p{color:#E0994D;font-weight:600}
+.slide.tight pre.cmd{font-size:13.6px;line-height:1.62;padding:12px 15px}
+.card pre.cmd{font-size:13.4px;line-height:1.6}
+
+h2{font-size:40px}.lede{font-size:24px}.body{padding-top:25px}
+ul.plain li{font-size:27px;line-height:1.45;margin-bottom:23px}
+ul.plain li::before{top:16px}
+table{font-size:23px;background:transparent} th,td{padding:13px 16px;line-height:1.35}
+thead th{font-size:17px;color:var(--ink-soft)}
+pre.cmd{font-size:21px;line-height:1.6;padding:22px 24px;overflow:visible}
+.code-points{margin:22px 0 0;padding-left:25px;font-size:23px;line-height:1.45}
+.code-points li{margin:8px 0}.schedule table{font-size:21px}.schedule th,.schedule td{padding:8px 14px}
+.slide.title{background:#f1f4f8 url('assets/camera-system-concept.png') center/cover no-repeat}
+.slide.title .course{font-size:62px;max-width:590px}.slide.title .sub{max-width:380px;font-size:30px}
+.slide.title .dept{font-size:21px;max-width:420px}
+.slide.section{background:var(--accent);color:white;justify-content:center}
+.slide.section h2{font-size:70px;color:white}.slide.section .lede{color:#e6eef8;font-size:36px}
+.slide.section .body{flex:0 0 auto;margin-top:30px}.slide.section li{color:white}
+.slide.section .foot{color:#d5e3f4;border-color:#7696bc}
+.foot{font-size:14px}a{color:inherit}
+.figure-layout{display:flex;flex-direction:column;align-items:center;gap:10px;min-height:0}
+.figure-layout .visual{width:100%;height:365px;display:flex;align-items:center;justify-content:center;background:white}
+.figure-layout img{width:100%;height:100%;object-fit:contain}
+.figure-layout .caption{font-size:23px;line-height:1.35;margin:0;width:100%}
+.figure-layout .credit{font-size:15px;line-height:1.25;margin:0;width:100%;color:var(--ink-soft)}
+.figure-layout.split{display:grid;grid-template-columns:620px 1fr;gap:28px;align-items:center}
+.figure-layout.split .visual{height:385px}.figure-layout.split .caption{font-size:25px}
+.figure-layout.split .caption p{margin:0 0 22px}.figure-layout.split .credit{grid-column:1/-1}
+.print-visual{display:none}
+@media print{.screen-visual{display:none!important}.print-visual{display:block!important}}
+.schedule table{font-size:20px}.schedule th,.schedule td{padding:7px 14px}
+
+</style></head><body><div id="deck">
+<section class="slide title" data-slide="1"><h1 class="course">ROS 2 on D3-G</h1><p class="sub">Yocto integration and USB camera lab</p><p class="dept">Automotive Sensors<br>Three-hour workshop</p></section>
+<section class="slide" data-slide="2"><h2>Learning outcomes</h2><p class="lede">By the end of the session</p><div class="body"><ul class="plain"><li>Explain ROS 2 nodes, communication and execution.</li><li>Describe camera, lidar and radar pipelines and fusion prerequisites.</li><li>Compare ROS 2 with automotive platforms and networks.</li><li>Build and inspect the D3 camera pipeline.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>02 / 71</span></div></section>
+<section class="slide schedule" data-slide="3"><h2>Session schedule</h2><p class="lede">180 minutes including a ten-minute break</p><div class="body"><table><thead><tr><th>Time</th><th>Activity</th></tr></thead><tbody><tr><td>0–10 min</td><td>Board recap and outcomes</td></tr><tr><td>10–35 min</td><td>ROS 2 concepts and graph</td></tr><tr><td>35–60 min</td><td>Camera, lidar, radar and sensor fusion</td></tr><tr><td>60–75 min</td><td>Vehicle platforms, networks and safety</td></tr><tr><td>75–95 min</td><td>Yocto integration and prepared-image demo</td></tr><tr><td>95–105 min</td><td>Break</td></tr><tr><td>105–125 min</td><td>Talker/listener and board–PC CLI</td></tr><tr><td>125–145 min</td><td>USB and V4L2 capture</td></tr><tr><td>145–170 min</td><td>ROS camera and viewer</td></tr><tr><td>170–180 min</td><td>Results and review</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>03 / 71</span></div></section>
+<section class="slide" data-slide="4"><h2>Three machines, three responsibilities</h2><p class="lede">Each command belongs to a specific environment</p><div class="body"><table><thead><tr><th>Environment</th><th>Responsibility</th><th>Main tools</th></tr></thead><tbody><tr><td>Build host</td><td>Cross-compile packages and assemble the image</td><td>BitBake, Git, build logs</td></tr><tr><td>D3-G board</td><td>Boot Linux and acquire sensor data</td><td>ROS 2, UVC, V4L2</td></tr><tr><td>Student PC</td><td>Connect to the board and display images</td><td>SSH, ROS 2, rqt_image_view</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>04 / 71</span></div></section>
+<section class="slide" data-slide="5"><h2>Board and OS checkpoint</h2><p class="lede">D3 terminal</p><div class="body"><pre class="cmd">hostname
+uname -m
+cat /etc/os-release
+ip -br addr
+df -h /</pre><ul class="code-points"><li>Expected CPU architecture: aarch64.</li><li>Record the board address and image identity.</li><li>Confirm that SSH reaches the intended board.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>05 / 71</span></div></section>
+<section class="slide" data-slide="6"><h2>Nodes</h2><p class="lede">Logical participants communicate across processes and machines</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/ros-nodes.gif" alt="Nodes"><img class="print-visual" src="assets/reference/ros-nodes.png" alt="Nodes"></div><div class="caption">Each node has a focused role. One process may contain several nodes.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Nodes/images/Nodes-TopicandService.gif">ROS 2 documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>06 / 71</span></div></section>
+<section class="slide" data-slide="7"><h2>Topics</h2><p class="lede">Publishers and subscribers exchange typed message streams</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/ros-topics.gif" alt="Topics"><img class="print-visual" src="assets/reference/ros-topics.png" alt="Topics"></div><div class="caption">One topic can connect multiple publishers and subscribers.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/images/Topic-MultiplePublisherandMultipleSubscriber.gif">ROS 2 documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>07 / 71</span></div></section>
+<section class="slide" data-slide="8"><h2>The ROS graph in rqt_graph</h2><p class="lede">An official turtlesim example, not a D3 test result</p><div class="body"><div class="figure-layout split"><div class="visual"><img class="screen-visual" src="assets/reference/ros-graph.png" alt="The ROS graph in rqt_graph"><img class="print-visual" src="assets/reference/ros-graph.png" alt="The ROS graph in rqt_graph"></div><div class="caption"><p>Ellipses represent nodes.</p><p>Topic connections reveal data flow.</p><p>Our camera graph follows the same pattern.</p></div><p class="credit">Source: <a href="https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/images/rqt_graph2.png">ROS 2 documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>08 / 71</span></div></section>
+<section class="slide" data-slide="9"><h2>Image messages</h2><p class="lede">sensor_msgs/msg/Image carries pixels and metadata</p><div class="body"><table><thead><tr><th>Field</th><th>Meaning</th></tr></thead><tbody><tr><td>header</td><td>Acquisition timestamp and coordinate-frame identifier</td></tr><tr><td>height, width</td><td>Image dimensions in pixels</td></tr><tr><td>encoding</td><td>Pixel representation, such as rgb8 or mono8</td></tr><tr><td>step</td><td>Bytes per image row, including any padding</td></tr><tr><td>data</td><td>Pixel bytes</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>09 / 71</span></div></section>
+<section class="slide" data-slide="10"><h2>Topics, services and actions</h2><p class="lede">Different communication patterns</p><div class="body"><table><thead><tr><th>Pattern</th><th>Interaction</th><th>Example</th></tr></thead><tbody><tr><td>Topic</td><td>Continuous or event-driven messages</td><td>Camera images</td></tr><tr><td>Service</td><td>Request followed by a response</td><td>Query a device setting</td></tr><tr><td>Action</td><td>Goal, feedback and result</td><td>Navigate to a destination</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>10 / 71</span></div></section>
+<section class="slide" data-slide="11"><h2>Services</h2><p class="lede">A request followed by a response</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/ros-service.gif" alt="Services"><img class="print-visual" src="assets/reference/ros-service.png" alt="Services"></div><div class="caption">Useful for operations such as querying a setting or requesting a reset.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/images/Service-SingleServiceClient.gif">ROS 2 documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>11 / 71</span></div></section>
+<section class="slide" data-slide="12"><h2>Actions</h2><p class="lede">A goal with feedback and a result</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/ros-action.gif" alt="Actions"><img class="print-visual" src="assets/reference/ros-action.png" alt="Actions"></div><div class="caption">Useful for longer activities that may need feedback or cancellation.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/images/Action-SingleActionClient.gif">ROS 2 documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>12 / 71</span></div></section>
+<section class="slide" data-slide="13"><h2>DDS and the ROS middleware interface</h2><p class="lede">Communication beneath the application</p><div class="body"><ul class="plain"><li>ROS client libraries expose node and topic APIs.</li><li>The RMW interface connects ROS 2 to a middleware implementation.</li><li>This image selects rmw_fastrtps_cpp.</li><li>Discovery, network access and QoS affect communication.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>13 / 71</span></div></section>
+<section class="slide" data-slide="14"><h2>ROS 2 software layers</h2><p class="lede">Where application code, middleware and Linux meet</p><div class="body"><table><thead><tr><th>Layer</th><th>Responsibility</th></tr></thead><tbody><tr><td>Application nodes</td><td>Camera acquisition, detection, tracking or visualization</td></tr><tr><td>rclcpp / rclpy</td><td>C++ and Python client APIs</td></tr><tr><td>rcl and RMW</td><td>Common client support and middleware abstraction</td></tr><tr><td>DDS implementation in this lab</td><td>Discovery, data exchange and QoS</td></tr><tr><td>Linux, drivers and hardware</td><td>Scheduling, networking, USB and sensor access</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>14 / 71</span></div></section>
+<section class="slide" data-slide="15"><h2>Execution and deployment</h2><p class="lede">A graph does not specify CPU scheduling</p><div class="body"><ul class="plain"><li>Executors dispatch subscription, timer and service callbacks.</li><li>Launch files start and configure a group of nodes.</li><li>Composition can place multiple nodes in one process.</li><li>Threading, queues and memory copies still affect latency.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>15 / 71</span></div></section>
+<section class="slide" data-slide="16"><h2>Camera, lidar and radar</h2><p class="lede">Complementary measurements and different failure modes</p><div class="body"><table><thead><tr><th>Sensor</th><th>Useful observations</th><th>Important limitations</th></tr></thead><tbody><tr><td>Camera</td><td>Appearance, lanes, signs and object class</td><td>Lighting, glare, occlusion; depth needs inference or geometry</td></tr><tr><td>Lidar</td><td>3D structure and geometric range</td><td>Occlusion, weather and reflective surfaces</td></tr><tr><td>Radar</td><td>Range and radial velocity, often useful in poor visibility</td><td>Multipath, clutter and angular resolution limits</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>16 / 71</span></div></section>
+<section class="slide" data-slide="17"><h2>Camera configuration</h2><p class="lede">Teaching example. Product photo illustrates an automotive camera.</p><div class="body"><div class="figure-layout split"><div class="visual"><img class="screen-visual" src="assets/reference/aw-camera.png" alt="Camera configuration"><img class="print-visual" src="assets/reference/aw-camera.png" alt="Camera configuration"></div><div class="caption"><p>Sensor and link: USB/UVC in our lab.</p><p>Driver publishes Image and CameraInfo.</p><p>Rectification and detection feed fusion.</p></div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/reference-design/reference-hw/images/camera-tieriv.png">Autoware documentation contributors; product images retain vendor ownership</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>17 / 71</span></div></section>
+<section class="slide" data-slide="18"><h2>Lidar configuration</h2><p class="lede">Teaching example. The lidar driver depends on the selected device.</p><div class="body"><div class="figure-layout split"><div class="visual"><img class="screen-visual" src="assets/reference/aw-lidar-hardware.png" alt="Lidar configuration"><img class="print-visual" src="assets/reference/aw-lidar-hardware.png" alt="Lidar configuration"></div><div class="caption"><p>Sensor packets often arrive over Ethernet.</p><p>The driver publishes sensor_msgs/PointCloud2.</p><p>Filtering and motion compensation precede detection.</p></div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/reference-design/reference-hw/images/lidar-ouster.png">Autoware documentation contributors; product images retain vendor ownership</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>18 / 71</span></div></section>
+<section class="slide" data-slide="19"><h2>Radar configuration</h2><p class="lede">Teaching example. Output can be detections or tracked objects.</p><div class="body"><div class="figure-layout split"><div class="visual"><img class="screen-visual" src="assets/reference/aw-radar-hardware.png" alt="Radar configuration"><img class="print-visual" src="assets/reference/aw-radar-hardware.png" alt="Radar configuration"></div><div class="caption"><p>CAN/CAN FD or Ethernet depends on hardware.</p><p>A driver decodes the vendor protocol.</p><p>RadarScan or RadarTracks can feed tracking and fusion.</p></div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/reference-design/reference-hw/images/radar-continental.png">Autoware documentation contributors; product images retain vendor ownership</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>19 / 71</span></div></section>
+<section class="slide" data-slide="20"><h2>A three-sensor ROS 2 interface</h2><p class="lede">Illustrative topic names. Actual drivers define their interfaces.</p><div class="body"><table><thead><tr><th>Producer</th><th>Example output</th><th>Consumer</th></tr></thead><tbody><tr><td>Camera driver</td><td>/camera/image_raw: Image</td><td>Image preprocessing and detector</td></tr><tr><td>Lidar driver</td><td>/lidar/points: PointCloud2</td><td>Point-cloud preprocessing and detector</td></tr><tr><td>Radar driver</td><td>/radar/scan: RadarScan</td><td>Radar processing and tracker</td></tr><tr><td>Fusion / tracking</td><td>/fusion/tracks: application-defined type</td><td>Prediction and planning</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>20 / 71</span></div></section>
+<section class="slide" data-slide="21"><h2>Radar driver and vehicle links</h2><p class="lede">Autoware reference architecture</p><div class="body"><div class="figure-layout split"><div class="visual"><img class="screen-visual" src="assets/reference/aw-radar.svg" alt="Radar driver and vehicle links"><img class="print-visual" src="assets/reference/aw-radar.svg" alt="Radar driver and vehicle links"></div><div class="caption"><p>Sensor protocol and ROS message format are different interfaces.</p><p>A gateway does not automatically convert units, frames or timestamps.</p></div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/sensing/data-types/radar-data/reference-implementations/image/radar-communication.drawio.svg">Autoware Foundation and documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>21 / 71</span></div></section>
+<section class="slide" data-slide="22"><h2>Sensor preprocessing in Autoware</h2><p class="lede">A reference design for combining heterogeneous sensor inputs</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/aw-sensing.svg" alt="Sensor preprocessing in Autoware"><img class="print-visual" src="assets/reference/aw-sensing.svg" alt="Sensor preprocessing in Autoware"></div><div class="caption">The sensing stage standardizes inputs before perception.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/sensing/image/overall-sensing-architecture.drawio.svg">Autoware Foundation and documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>22 / 71</span></div></section>
+<section class="slide" data-slide="23"><h2>Point clouds in a common frame</h2><p class="lede">Autoware ground–lidar calibration example</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/aw-pointcloud.png" alt="Point clouds in a common frame"><img class="print-visual" src="assets/reference/aw-pointcloud.png" alt="Point clouds in a common frame"></div><div class="caption">Points need a coordinate frame before geometric comparison.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/tutorials/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/ground-lidar-calibration/images/after-ground-plane.png">Autoware documentation contributors; product images retain vendor ownership</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>23 / 71</span></div></section>
+<section class="slide" data-slide="24"><h2>Transforms and sensor frames</h2><p class="lede">tf2 maintains relationships between coordinate frames</p><div class="body"><div class="figure-layout split"><div class="visual"><img class="screen-visual" src="assets/reference/ros-frames.png" alt="Transforms and sensor frames"><img class="print-visual" src="assets/reference/ros-frames.png" alt="Transforms and sensor frames"></div><div class="caption"><p>Each sensor has its own frame.</p><p>Extrinsic calibration connects sensor frames to the vehicle.</p><p>Transforms must match the measurement time.</p></div><p class="credit">Source: <a href="https://raw.githubusercontent.com/ros2/ros2_documentation/a24bb638b71fcc8263fd60afae5b94c5e14de51a/source/Concepts/images/ros2_tf2_frames.png">ROS 2 documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>24 / 71</span></div></section>
+<section class="slide" data-slide="25"><h2>Camera–lidar calibration</h2><p class="lede">An Autoware projection example</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/aw-calibration.png" alt="Camera–lidar calibration"><img class="print-visual" src="assets/reference/aw-calibration.png" alt="Camera–lidar calibration"></div><div class="caption">Camera intrinsics and sensor extrinsics determine where 3D points project.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/tutorials/integrating-autoware/creating-vehicle-and-sensor-model/calibrating-sensors/lidar-camera-calibration/images/interactive-calibrator-results.png">Autoware Foundation and documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>25 / 71</span></div></section>
+<section class="slide" data-slide="26"><h2>Time synchronization</h2><p class="lede">Correct geometry also requires compatible timestamps</p><div class="body"><ul class="plain"><li>Timestamp data at acquisition when the device supports it.</li><li>Use a common time basis and check clock offset.</li><li>Match measurements within a justified time window.</li><li>A small queue does not compensate for clock error.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>26 / 71</span></div></section>
+<section class="slide" data-slide="27"><h2>Perception and fusion</h2><p class="lede">Autoware separates sensor input, recognition and planning interfaces</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/aw-perception.svg" alt="Perception and fusion"><img class="print-visual" src="assets/reference/aw-perception.svg" alt="Perception and fusion"></div><div class="caption">Fusion combines evidence. It still needs calibration, timing and uncertainty handling.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/perception/image/high-level-perception-diagram.drawio.svg">Autoware Foundation and documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>27 / 71</span></div></section>
+<section class="slide" data-slide="28"><h2>Tracking across measurements</h2><p class="lede">Autoware multi-object tracking reference</p><div class="body"><div class="figure-layout split"><div class="visual"><img class="screen-visual" src="assets/reference/aw-tracking.svg" alt="Tracking across measurements"><img class="print-visual" src="assets/reference/aw-tracking.svg" alt="Tracking across measurements"></div><div class="caption"><p>Associate detections over time.</p><p>Estimate state and uncertainty.</p><p>Handle missed detections and conflicting evidence.</p></div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/perception/image/multi_object_tracking.drawio.svg">Autoware Foundation and documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>28 / 71</span></div></section>
+<section class="slide" data-slide="29"><h2>Autoware in the driving stack</h2><p class="lede">A ROS 2-based application stack above the communication framework</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/aw-overview.svg" alt="Autoware in the driving stack"><img class="print-visual" src="assets/reference/aw-overview.svg" alt="Autoware in the driving stack"></div><div class="caption">Sensing, perception, localization, planning and control have distinct responsibilities.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/image/autoware-architecture-overview.drawio.svg">Autoware Foundation and documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>29 / 71</span></div></section>
+<section class="slide" data-slide="30"><h2>Vehicle software uses several technology layers</h2><p class="lede">A role-based comparison avoids false alternatives</p><div class="body"><table><thead><tr><th>Role</th><th>Examples</th><th>Relationship to this lab</th></tr></thead><tbody><tr><td>Applications</td><td>Autoware, OEM ADAS and control software</td><td>Algorithms above middleware</td></tr><tr><td>ECU software platform</td><td>AUTOSAR Classic, Adaptive, Linux or RTOS stacks</td><td>Depends on ECU role and integration</td></tr><tr><td>Communication</td><td>DDS, SOME/IP, CAN/CAN FD, Ethernet</td><td>Different protocol layers and semantics</td></tr><tr><td>Engineering assurance</td><td>ISO 26262, ISO 21448, ISO/SAE 21434</td><td>Lifecycle and evidence beyond package choice</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>30 / 71</span></div></section>
+<section class="slide" data-slide="31"><h2>ROS 2 and AUTOSAR platforms</h2><p class="lede">They address overlapping needs with different scope</p><div class="body"><table><thead><tr><th>Dimension</th><th>ROS 2</th><th>Classic</th><th>Adaptive</th></tr></thead><tbody><tr><td>Main focus</td><td>Robotics applications and tools</td><td>Predictable embedded ECU software</td><td>Higher-performance service-oriented ECU software</td></tr><tr><td>Application model</td><td>Nodes, topics, services, actions</td><td>Software components and RTE</td><td>Adaptive applications and services</td></tr><tr><td>Execution base</td><td>OS and middleware integration</td><td>Configured basic software and OS</td><td>POSIX-based OS environment</td></tr><tr><td>Production assurance</td><td>Depends on selected product and system evidence</td><td>Depends on implementation and integration</td><td>Depends on implementation and integration</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>31 / 71</span></div></section>
+<section class="slide" data-slide="32"><h2>Example deployment across vehicle ECUs</h2><p class="lede">Conceptual arrangement. Production designs vary by vehicle.</p><div class="body"><table><thead><tr><th>Compute location</th><th>Example responsibility</th><th>Possible software environment</th></tr></thead><tbody><tr><td>Sensor electronics</td><td>Capture and local signal processing</td><td>Vendor firmware or RTOS</td></tr><tr><td>ADAS / central compute</td><td>Perception, fusion and planning</td><td>ROS 2 stack, Adaptive platform or OEM stack</td></tr><tr><td>Gateway / zonal controller</td><td>Network routing and local I/O</td><td>AUTOSAR, RTOS or mixed architecture</td></tr><tr><td>Actuator ECU</td><td>Local control, diagnostics and protection</td><td>Classic platform or dedicated embedded stack</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>32 / 71</span></div></section>
+<section class="slide" data-slide="33"><h2>Vehicle networks and middleware</h2><p class="lede">A ROS topic and a vehicle bus are different abstractions</p><div class="body"><table><thead><tr><th>Technology</th><th>Typical role</th><th>Integration concern</th></tr></thead><tbody><tr><td>CAN / CAN FD</td><td>Control and status frames</td><td>Signal packing, cycle time, units and bus load</td></tr><tr><td>LIN</td><td>Low-cost local actuator/sensor networks</td><td>Scheduling and gateway translation</td></tr><tr><td>Automotive Ethernet</td><td>Network links for larger data volumes</td><td>PHY, switching, traffic design and timing</td></tr><tr><td>SOME/IP</td><td>Service-oriented communication over IP</td><td>Service definitions and serialization</td></tr><tr><td>DDS in this lab</td><td>Data-centric publish/subscribe and QoS</td><td>Discovery, compatibility and resource limits</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>33 / 71</span></div></section>
+<section class="slide" data-slide="34"><h2>Vehicle interface boundary</h2><p class="lede">A simplified teaching architecture for commands and feedback</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/vehicle-adapter-concept.png" alt="Vehicle interface boundary"><img class="print-visual" src="assets/vehicle-adapter-concept.png" alt="Vehicle interface boundary"></div><div class="caption">An adapter translates the command contract and validates operating constraints.</div><p class="credit">Source: <a href="https://github.com/autowarefoundation/autoware-documentation/tree/main/docs/design/autoware-architecture-v1/components/control">Course-created conceptual illustration (AI-assisted), based on Autoware vehicle-interface design</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>34 / 71</span></div></section>
+<section class="slide" data-slide="35"><h2>Real-time behavior and safety evidence</h2><p class="lede">Middleware selection is one part of system engineering</p><div class="body"><table><thead><tr><th>Concern</th><th>Required reasoning</th></tr></thead><tbody><tr><td>Timing</td><td>Worst-case deadlines, scheduling, memory use and overload behavior</td></tr><tr><td>Functional safety</td><td>Hazard analysis and evidence for malfunctioning E/E behavior</td></tr><tr><td>SOTIF</td><td>Performance limitations and unsafe intended-function scenarios</td></tr><tr><td>Cybersecurity</td><td>Threats, access control, updates and lifecycle risk management</td></tr><tr><td>Validation</td><td>Unit/integration tests, simulation, HIL and controlled vehicle tests</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>35 / 71</span></div></section>
+<section class="slide" data-slide="36"><h2>What transfers from this course</h2><p class="lede">The engineering habits remain useful across automotive platforms</p><div class="body"><ul class="plain"><li>Define the data contract: type, units, frame and time.</li><li>Separate sensor access, processing and communication.</li><li>Measure latency and loss under realistic load.</li><li>Document faults, recovery and reproducible configuration.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>36 / 71</span></div></section>
+<section class="slide" data-slide="37"><h2>BitBake and colcon</h2><p class="lede">Two build workflows</p><div class="body"><table><thead><tr><th>Tool</th><th>Typical input</th><th>Output in this course</th></tr></thead><tbody><tr><td>BitBake</td><td>Recipes, layers and machine configuration</td><td>ARM64 packages and the D3 Linux image</td></tr><tr><td>colcon</td><td>ROS workspace packages</td><td>A workspace install tree for its selected platform</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>37 / 71</span></div></section>
+<section class="slide" data-slide="38"><h2>Layers in this build</h2><p class="lede">The existing BSP remains the hardware foundation</p><div class="body"><table><thead><tr><th>Layer</th><th>Role</th></tr></thead><tbody><tr><td>Poky and meta-openembedded</td><td>Linux distribution tools and general packages</td></tr><tr><td>meta-topst-bsp and meta-topst</td><td>D3 machine, kernel, drivers and base image</td></tr><tr><td>meta-ros-common, meta-ros2, meta-ros2-humble</td><td>ROS 2 Humble recipes and classes</td></tr><tr><td>meta-yu-ros2</td><td>Course image and D3-specific integration settings</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>38 / 71</span></div></section>
+<section class="slide" data-slide="39"><h2>Image contents</h2><p class="lede">A small set of explicit packages brings dependencies</p><div class="body"><table><thead><tr><th>Group</th><th>Examples</th></tr></thead><tbody><tr><td>Environment</td><td>ros-workspace, ros-environment</td></tr><tr><td>CLI</td><td>ros2cli, ros2run, ros2node, ros2topic, ros2param</td></tr><tr><td>Interfaces and launch</td><td>ros2interface, ros2launch</td></tr><tr><td>First communication test</td><td>demo-nodes-cpp, rmw-fastrtps-cpp</td></tr><tr><td>Camera</td><td>v4l2-camera, v4l-utils, usbutils</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>39 / 71</span></div></section>
+<section class="slide" data-slide="40"><h2>Reproducible source revisions</h2><p class="lede">The manifest identifies the actual build inputs</p><div class="body"><ul class="plain"><li>Keep the original TOPST baseline available.</li><li>Pin meta-ros and personal fork commits.</li><li>Record local configuration and the image manifest.</li><li>Separate general recipe repairs from classroom policy.</li><li>This Kirkstone integration uses an unsupported meta-ros branch.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>40 / 71</span></div></section>
+<section class="slide" data-slide="41"><h2>Integration issues in this workspace</h2><p class="lede">Repairs and configuration choices</p><div class="body"><table><thead><tr><th>Issue</th><th>Current approach</th></tr></thead><tbody><tr><td>Boost / fmt / OpenCV source locations</td><td>Pinned repairs in personal forks</td></tr><tr><td>OpenCV and PowerVR OpenCL providers</td><td>Disable target OpenCV OpenCL for CPU camera conversion</td></tr><tr><td>Host tool cache changes</td><td>Keep the original zstd-native version</td></tr><tr><td>USB camera driver</td><td>Existing TOPST UVC configuration is enabled</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>41 / 71</span></div></section>
+<section class="slide" data-slide="42"><h2>Course scripts download</h2><p class="lede">Ubuntu build host. Public repository, no GitHub login required.</p><div class="body"><pre class="cmd">cd ~
+git clone --depth 1 --filter=blob:none --sparse \
+  https://github.com/yu-asw/automotive-sensor.git automotive-sensor-labs
+cd automotive-sensor-labs
+git sparse-checkout set labs/ros2-yocto</pre><ul class="code-points"><li>run-build.sh is a course script, not a built-in Yocto command.</li><li>Download the complete lab directory, including its layer and configuration.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>42 / 71</span></div></section>
+<section class="slide" data-slide="43"><h2>Course tools installation</h2><p class="lede">From the downloaded automotive-sensor-labs directory</p><div class="body"><pre class="cmd">python3 labs/ros2-yocto/install-tools.py --check
+python3 labs/ros2-yocto/install-tools.py</pre><ul class="code-points"><li>Requires the existing SDK at ~/d3-g-yocto and the prepared host tools.</li><li>Copies run-build.sh and its companion files into the SDK.</li><li>Refuses to overwrite differing local files.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>43 / 71</span></div></section>
+<section class="slide" data-slide="44"><h2>ROS layer and build setup</h2><p class="lede">One-time setup after tool installation</p><div class="body"><pre class="cmd">cd ~/d3-g-yocto
+git clone --branch kirkstone \
+  https://github.com/ros/meta-ros.git layers/meta-ros
+git -C layers/meta-ros checkout --detach \
+  446dd9e3f26fe8a6594671b5b865872b4199f16c
+python3 apply-forks.py
+python3 prepare-build.py</pre><ul class="code-points"><li>Use this clone command only when meta-ros does not already exist.</li><li>Stop BitBake before switching revisions. Reuse existing ROS build configuration.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>44 / 71</span></div></section>
+<section class="slide" data-slide="45"><h2>Build demonstration</h2><p class="lede">Build host terminal</p><div class="body"><pre class="cmd">cd ~/d3-g-yocto
+./run-build.sh -n yu-ros2-image
+./run-build.sh yu-ros2-image</pre><ul class="code-points"><li>The setup scripts must already have prepared the separate build.</li><li>A dry run checks scheduling, not compilation or runtime behavior.</li><li>The first full build belongs in preparation time.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>45 / 71</span></div></section>
+<section class="slide" data-slide="46"><h2>Build logs and acceptance</h2><p class="lede">A task count alone does not prove success</p><div class="body"><ul class="plain"><li>Check the final process exit code and task summary.</li><li>Locate the first actionable error and its recipe task log.</li><li>Verify image packages and ARM64 runtime files.</li><li>Keep build success separate from board and camera tests.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>46 / 71</span></div></section>
+<section class="slide" data-slide="47"><h2>Image and deployment checks</h2><p class="lede">Build and archive checks passed; board and camera tests remain open</p><div class="body"><table><thead><tr><th>Check</th><th>Evidence</th></tr></thead><tbody><tr><td>Build</td><td>8,354 tasks succeeded; exit code 0</td></tr><tr><td>Root filesystem</td><td>ROS packages and ARM64 executables verified</td></tr><tr><td>FWDN archive</td><td>Input sizes, ZIP integrity and transfer hash verified</td></tr><tr><td>ROS communication</td><td>QEMU listener reception not confirmed; test on D3</td></tr><tr><td>Hardware</td><td>Board boot and camera capture not yet verified</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>47 / 71</span></div></section>
+<section class="slide" data-slide="48"><h2>FWDN download</h2><p class="lede">Linux download PC; confirm the board and back up eMMC first</p><div class="body"><pre class="cmd">./fwdn --fwdn boot-firmware/fwdn.json
+./fwdn --storage emmc --low-format
+./fwdn -w boot-firmware/boot.single.json
+./fwdn -w yu_ros2_d3g.fai --storage emmc --area user</pre><ul class="code-points"><li>The first command loads RAM code; low-format erases eMMC.</li><li>Use the tutorial for boot mode, Windows/macOS and recovery.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>48 / 71</span></div></section>
+<section class="slide" data-slide="49"><h2>ROS environment</h2><p class="lede">Every D3 terminal needs the same session settings</p><div class="body"><pre class="cmd">. /opt/ros/humble/local_setup.sh
+export ROS_DOMAIN_ID=10
+export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+export ROS_LOCALHOST_ONLY=0</pre><ul class="code-points"><li>Use the same domain on the board and its PC.</li><li>Assign a different domain to each team.</li><li>Source the environment again in each new terminal.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>49 / 71</span></div></section>
+<section class="slide" data-slide="50"><h2>Talker and listener</h2><p class="lede">Two D3 terminals</p><div class="body"><pre class="cmd"># Terminal A
+ros2 run demo_nodes_cpp talker
+
+# Terminal B
+ros2 run demo_nodes_cpp listener</pre><ul class="code-points"><li>The talker publishes messages on /chatter.</li><li>The listener should receive repeated messages.</li><li>Stop both processes with Ctrl+C after recording the result.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>50 / 71</span></div></section>
+<section class="slide" data-slide="51"><h2>ROS graph inspection</h2><p class="lede">A third terminal while the demo is running</p><div class="body"><pre class="cmd">ros2 node list
+ros2 topic list -t
+ros2 topic info /chatter --verbose
+ros2 interface show std_msgs/msg/String
+ros2 topic hz /chatter</pre><ul class="code-points"><li>Record the publisher, subscriber and message type.</li><li>Explain what the measured receive rate represents.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>51 / 71</span></div></section>
+<section class="slide section" data-slide="52"><h2>Break</h2><p class="lede">10 minutes</p><div class="body"><ul class="plain"><li>Resume with board–PC communication.</li><li>Keep the board powered and note its current IP address.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>52 / 71</span></div></section>
+<section class="slide" data-slide="53"><h2>Board–PC communication</h2><p class="lede">Same ROS domain, reachable network</p><div class="body"><table><thead><tr><th>Setting</th><th>Board and PC</th></tr></thead><tbody><tr><td>ROS distribution</td><td>Use the prepared Humble environments</td></tr><tr><td>Domain</td><td>Same ID within the team</td></tr><tr><td>Middleware</td><td>Use the selected Fast DDS configuration</td></tr><tr><td>Network</td><td>Reachable addresses and permitted discovery/data traffic</td></tr><tr><td>Localhost setting</td><td>Allow non-local communication</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>53 / 71</span></div></section>
+<section class="slide" data-slide="54"><h2>Two-machine experiment</h2><p class="lede">Talker on D3, listener on the PC</p><div class="body"><pre class="cmd"># D3, after environment setup
+ros2 run demo_nodes_cpp talker
+
+# PC, after Humble setup and matching domain
+ros2 run demo_nodes_cpp listener</pre><ul class="code-points"><li>First confirm that both nodes work on one machine.</li><li>Then move the subscriber to the PC.</li><li>Compare the graph and message reception.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>54 / 71</span></div></section>
+<section class="slide" data-slide="55"><h2>QoS reliability compatibility</h2><p class="lede">Publisher offers, subscriber requests</p><div class="body"><table><thead><tr><th>Publisher</th><th>Subscriber</th><th>Reliability compatible?</th></tr></thead><tbody><tr><td>Best effort</td><td>Best effort</td><td>Yes</td></tr><tr><td>Best effort</td><td>Reliable</td><td>No</td></tr><tr><td>Reliable</td><td>Best effort</td><td>Yes</td></tr><tr><td>Reliable</td><td>Reliable</td><td>Yes</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>55 / 71</span></div></section>
+<section class="slide" data-slide="56"><h2>Communication checkpoint</h2><p class="lede">Before connecting the camera</p><div class="body"><ul class="plain"><li>The PC receives /chatter from the board.</li><li>Both terminals use the assigned domain.</li><li>Students can name the topic type and both nodes.</li><li>Students can distinguish discovery failure from data loss.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>56 / 71</span></div></section>
+<section class="slide" data-slide="57"><h2>USB camera discovery</h2><p class="lede">D3 terminal</p><div class="body"><pre class="cmd">lsusb
+v4l2-ctl --list-devices
+v4l2-ctl -d /dev/video0 --all</pre><ul class="code-points"><li>Identify the actual capture device before using video0.</li><li>One camera can expose more than one video device.</li><li>USB detection and video capture are separate checks.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>57 / 71</span></div></section>
+<section class="slide" data-slide="58"><h2>Camera format negotiation</h2><p class="lede">The camera and driver must support the requested mode</p><div class="body"><pre class="cmd">v4l2-ctl -d /dev/video0 --list-formats-ext</pre><ul class="code-points"><li>Record FOURCC, resolution and supported frame intervals.</li><li>This v4l2_camera version supports YUYV, UYVY and GREY input.</li><li>A camera’s MJPEG mode is not automatically usable here.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>58 / 71</span></div></section>
+<section class="slide" data-slide="59"><h2>Capture without ROS</h2><p class="lede">Example only after confirming YUYV at 640 × 480</p><div class="body"><pre class="cmd">v4l2-ctl -d /dev/video0 \
+  --set-fmt-video=width=640,height=480,pixelformat=YUYV \
+  --stream-mmap --stream-count=30 \
+  --stream-to=/tmp/camera-test.yuyv</pre><ul class="code-points"><li>Record whether capture completes and any driver errors.</li><li>The output contains raw frames, not a playable MP4 file.</li><li>Close the capture tool before starting the ROS camera node.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>59 / 71</span></div></section>
+<section class="slide" data-slide="60"><h2>ROS camera node</h2><p class="lede">D3 terminal, using the confirmed capture mode</p><div class="body"><pre class="cmd">ros2 run v4l2_camera v4l2_camera_node --ros-args \
+  -r __ns:=/camera \
+  -p video_device:=/dev/video0 \
+  -p pixel_format:=YUYV \
+  -p &#x27;image_size:=[640,480]&#x27;</pre><ul class="code-points"><li>The namespace makes the image topic /camera/image_raw.</li><li>Read startup logs for negotiated formats and capture errors.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>60 / 71</span></div></section>
+<section class="slide" data-slide="61"><h2>Camera parameters and topics</h2><p class="lede">A second D3 terminal</p><div class="body"><pre class="cmd">ros2 node list
+ros2 param list /camera/v4l2_camera
+ros2 param get /camera/v4l2_camera image_size
+ros2 topic info /camera/image_raw --verbose
+ros2 interface show sensor_msgs/msg/Image</pre><ul class="code-points"><li>Use the actual node name from node list.</li><li>Inspect publisher QoS before configuring the viewer.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>61 / 71</span></div></section>
+<section class="slide" data-slide="62"><h2>PC image viewer</h2><p class="lede">Prepared Humble PC terminal</p><div class="body"><pre class="cmd">ros2 run rqt_image_view rqt_image_view</pre><ul class="code-points"><li>Select /camera/image_raw.</li><li>Check domain, discovery and QoS if the topic has no images.</li><li>Keep GUI rendering on the PC for this exercise.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>62 / 71</span></div></section>
+<section class="slide" data-slide="63"><h2>Raw image bandwidth</h2><p class="lede">Illustrative calculation for rgb8 output</p><div class="body"><table><thead><tr><th>Quantity</th><th>640 × 480 at 30 frames/s</th></tr></thead><tbody><tr><td>Bytes per pixel</td><td>3</td></tr><tr><td>Bytes per frame</td><td>640 × 480 × 3 = 921,600</td></tr><tr><td>Payload rate</td><td>27,648,000 bytes/s</td></tr><tr><td>Payload bit rate</td><td>221.184 Mbit/s</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>63 / 71</span></div></section>
+<section class="slide" data-slide="64"><h2>Four different frame rates</h2><p class="lede">Receive-rate check: ros2 topic hz /camera/image_raw</p><div class="body"><table><thead><tr><th>Rate</th><th>What it describes</th></tr></thead><tbody><tr><td>Requested</td><td>The camera mode we ask for</td></tr><tr><td>Captured</td><td>Frames the driver actually obtains</td></tr><tr><td>Received</td><td>Frames a ROS subscriber observes</td></tr><tr><td>Displayed</td><td>Frames the viewer draws</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>64 / 71</span></div></section>
+<section class="slide" data-slide="65"><h2>Troubleshooting by layer</h2><p class="lede">Evidence narrows the next check</p><div class="body"><table><thead><tr><th>Symptom</th><th>Next evidence</th></tr></thead><tbody><tr><td>No USB device</td><td>Power, cable, lsusb and kernel logs</td></tr><tr><td>USB present, capture fails</td><td>Device capabilities, selected format and permissions</td></tr><tr><td>Capture works, node fails</td><td>ROS environment, parameters and node log</td></tr><tr><td>Topic visible, no images</td><td>Publisher/subscriber QoS and traffic path</td></tr><tr><td>Images arrive slowly</td><td>Resolution, encoding, receive rate and CPU/network load</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>65 / 71</span></div></section>
+<section class="slide" data-slide="66"><h2>Team experiment</h2><p class="lede">One controlled change and one explanation</p><div class="body"><ul class="plain"><li>Record a working baseline image stream.</li><li>Change one supported resolution or one communication setting.</li><li>Measure the effect and identify the affected layer.</li><li>Restore the baseline and repeat the test.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>66 / 71</span></div></section>
+<section class="slide" data-slide="67"><h2>Lab submission</h2><p class="lede">Evidence from the actual run</p><div class="body"><ul class="plain"><li>Board image identity and team network/domain settings.</li><li>Exact camera device, FOURCC, resolution and ROS encoding.</li><li>Viewer screenshot and observed topic receive rate.</li><li>Commands to reproduce the result and one diagnosed issue.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>67 / 71</span></div></section>
+<section class="slide" data-slide="68"><h2>What this session connects</h2><p class="lede">Linux image construction and sensor applications</p><div class="body"><ul class="plain"><li>Yocto assembles the target system and its ROS packages.</li><li>The BSP provides the board and device support.</li><li>ROS 2 exposes sensor data through inspectable interfaces.</li><li>Layer-by-layer tests explain where a failure occurs.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>68 / 71</span></div></section>
+<section class="slide" data-slide="69"><h2>References and companion material</h2><p class="lede">For commands, source revisions and deeper reading</p><div class="body"><table><thead><tr><th>Source</th><th>Content</th></tr></thead><tbody><tr><td>ROS 2 Humble documentation</td><td>Nodes, topics, CLI and QoS</td></tr><tr><td>ros/meta-ros, kirkstone branch</td><td>Yocto integration and support status</td></tr><tr><td>Pinned v4l2_camera 0.6.2 README</td><td>Device parameters and supported formats</td></tr><tr><td>labs/ros2-yocto/TUTORIAL.ko.md</td><td>Build, FWDN, ROS and camera lab</td></tr><tr><td>SOURCES.md and assets/reference/</td><td>Source links, figure attribution and licenses</td></tr></tbody></table></div><div class="foot"><span>ROS 2 on D3-G</span><span>69 / 71</span></div></section>
+<section class="slide" data-slide="70"><h2>Appendix: image recipe</h2><p class="lede">Course layer, simplified excerpt</p><div class="body"><pre class="cmd">require recipes-telechips-topst/images/telechips-topst-image.bb
+inherit ros_distro_humble ros2_image
+
+IMAGE_INSTALL:append = &quot; ros-workspace ros-environment&quot;
+IMAGE_INSTALL:append = &quot; demo-nodes-cpp rmw-fastrtps-cpp&quot;
+IMAGE_INSTALL:append = &quot; v4l2-camera v4l-utils usbutils&quot;</pre><ul class="code-points"><li>The actual recipe also includes the ROS CLI packages.</li><li>Keep course image policy in meta-yu-ros2.</li></ul></div><div class="foot"><span>ROS 2 on D3-G</span><span>70 / 71</span></div></section>
+<section class="slide" data-slide="71"><h2>Appendix: Autoware vehicle interface</h2><p class="lede">Detailed reference diagram. Use the linked source for close inspection.</p><div class="body"><div class="figure-layout"><div class="visual"><img class="screen-visual" src="assets/reference/aw-vehicle.svg" alt="Appendix: Autoware vehicle interface"><img class="print-visual" src="assets/reference/aw-vehicle.svg" alt="Appendix: Autoware vehicle interface"></div><div class="caption">Vehicle-specific commands and status need explicit adapters and constraints.</div><p class="credit">Source: <a href="https://raw.githubusercontent.com/autowarefoundation/autoware-documentation/7c188a24fe67100ffbee00b49a49356e948470bc/docs/design/autoware-architecture-v1/components/control/image/vehicle-interface-hw-abstraction.drawio.svg">Autoware Foundation and documentation contributors</a></p></div></div><div class="foot"><span>ROS 2 on D3-G</span><span>71 / 71</span></div></section>
+</div>
+
+<div id="notepanel" aria-live="polite"></div>
+<div id="hud"><span id="cur">1</span> / <span id="tot">43</span></div>
+<div id="help">← → Space · N notes · F fullscreen</div>
+
+<script>
+(function(){
+  "use strict";
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var deck = document.getElementById("deck");
+  var panel = document.getElementById("notepanel");
+  var hud = document.getElementById("hud");
+  var curEl = document.getElementById("cur");
+  var totEl = document.getElementById("tot");
+  var idx = 0, notesOn = false;
+
+  totEl.textContent = slides.length;
+
+  function fit(){
+    var s = Math.min(window.innerWidth / 1300, window.innerHeight / 750);
+    if (s > 1) s = 1;
+    if (s < 0.15) s = 0.15;
+    deck.style.setProperty("--scale", s);
+  }
+
+  function renderNotes(){
+    if (!notesOn){ panel.classList.remove("on"); panel.innerHTML = ""; return; }
+    var a = slides[idx].querySelector("aside.notes");
+    var t = slides[idx].querySelector("h2, .course, .qtext");
+    var head = "<h4>" + (idx + 1) + " / " + slides.length + (t ? " · " + t.textContent.replace(/\s+/g, " ").trim() : "") + "</h4>";
+    panel.innerHTML = head + (a ? a.innerHTML : "<p>(no notes)</p>");
+    panel.classList.add("on");
+  }
+
+  function show(n, push){
+    if (n < 0) n = 0;
+    if (n > slides.length - 1) n = slides.length - 1;
+    slides[idx].classList.remove("active");
+    idx = n;
+    slides[idx].classList.add("active");
+    curEl.textContent = idx + 1;
+    renderNotes();
+    if (push !== false){
+      var h = "#" + (idx + 1);
+      if (location.hash !== h){ history.replaceState(null, "", h); }
+    }
+  }
+
+  function fromHash(){
+    var m = /^#(\d+)$/.exec(location.hash || "");
+    var n = m ? parseInt(m[1], 10) - 1 : 0;
+    if (isNaN(n)) n = 0;
+    show(n, false);
+  }
+
+  document.addEventListener("keydown", function(e){
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key;
+    if (k === "ArrowRight" || k === "ArrowDown" || k === "PageDown" || k === " " || k === "Spacebar"){
+      e.preventDefault(); show(idx + 1);
+    } else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp" || k === "Backspace"){
+      e.preventDefault(); show(idx - 1);
+    } else if (k === "Home"){ e.preventDefault(); show(0); }
+    else if (k === "End"){ e.preventDefault(); show(slides.length - 1); }
+    else if (k === "n" || k === "N"){ e.preventDefault(); notesOn = !notesOn; renderNotes(); }
+    else if (k === "f" || k === "F"){
+      e.preventDefault();
+      if (document.fullscreenElement){ document.exitFullscreen(); }
+      else if (document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen(); }
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    if (e.target.closest("a") || e.target.closest("#notepanel") || e.target.closest("#help")) return;
+    show(idx + 1);
+  });
+
+  window.addEventListener("resize", fit);
+  window.addEventListener("hashchange", fromHash);
+  fit();
+  fromHash();
+})();
+</script>
+</body>
+</html>

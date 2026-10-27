@@ -27,7 +27,7 @@ for name in ('local_setup.sh', 'bin/ros2', 'lib/demo_nodes_cpp/talker',
         raise SystemExit('Missing rootfs file: ' + path + '\n' + result.stderr)
     print('PASS:', path)
 with tempfile.TemporaryDirectory() as directory:
-    executable = Path(directory) / 'talker'
+    executable = Path(directory) / 'talker.elf'
     subprocess.run(['debugfs', '-R', f'dump /opt/ros/humble/lib/demo_nodes_cpp/talker {executable}',
                     str(args.rootfs)], check=True, capture_output=True)
     header = subprocess.check_output(['readelf', '-h', str(executable)], text=True)

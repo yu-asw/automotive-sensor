@@ -1,7 +1,7 @@
 # 기존 D3-G Yocto 환경에 ROS 2를 추가하고 FWDN으로 기록하기
 
 작성: 2026-10-28. 이전 수업에서 TOPST D3-G 이미지를 빌드한 환경을 재사용한다.
-**현재 실측 상태: ROS 2 재빌드 진행 중. 보드가 없어 실제 FWDN 기록·부팅은 미실행.**
+**현재 실측 상태: ROS 2 빌드 성공(8,354 tasks, 종료 코드 0), 이미지 정적 검사·FWDN ZIP 검사 통과. 보드가 없어 실제 FWDN 기록·부팅은 미실행.**
 이 문서에서 빌드 호스트, 다운로드 PC, D3 보드를 구분한다.
 
 ## 1. 목표와 작업 위치
@@ -156,10 +156,12 @@ ls -lh "$DEPLOY"/yu-ros2-image*.manifest "$DEPLOY"/yu-ros2-image*.ext4
 ```
 
 타임스탬프 파일과 심볼릭 링크가 함께 있을 수 있다. 같은 빌드의 manifest와 ext4를 선택한다.
-아래는 실제 파일을 지정하는 형식이며 `<...>` 부분은 출력된 경로로 바꾼다.
+이번 빌드에서 확인한 심볼릭 링크 이름은 다음과 같다. 다른 환경에서는 실제 생성 이름과 대조한다.
 
 ```bash
-python3 verify-image.py '<manifest 경로>' '<ext4 경로>'
+python3 verify-image.py \
+  "$DEPLOY/yu-ros2-image-humble-d3-g-topst-main.manifest" \
+  "$DEPLOY/yu-ros2-image-humble-d3-g-topst-main.ext4"
 ```
 
 검사 항목은 ROS CLI·demo·카메라 패키지, `/opt/ros/humble`의 환경 스크립트와 실행 파일,
@@ -171,7 +173,7 @@ python3 verify-image.py '<manifest 경로>' '<ext4 경로>'
 
 ```bash
 cd ~/d3-g-yocto
-python3 package-fwdn.py '<검증한 새 ext4 경로>' "$HOME/d3g-ros2-package-01"
+python3 package-fwdn.py "$DEPLOY/yu-ros2-image-humble-d3-g-topst-main.ext4" "$HOME/d3g-ros2-package-01"
 ```
 
 출력 디렉터리는 새 경로여야 한다. 결과:
@@ -284,3 +286,24 @@ ros2 run demo_nodes_cpp listener
 
 빌드 성공, 패키지 완성, eMMC 기록, 부팅, ROS 통신은 각각 따로 기록한다.
 USB 카메라 검증은 이후 V4L2 직접 캡처와 `/camera/image_raw` 확인으로 이어간다.
+
+## 15. 2026-10-28 리허설 결과
+
+| 검사 | 결과 |
+|---|---|
+| build-07 | 8,354 tasks 성공, 종료 코드 0; 캐시 재사용을 포함한 이번 실행 26분 2초 |
+| rootfs | 약 1.1GB; ROS CLI, demo, 카메라 패키지·실행 파일과 talker AArch64 형식 확인 |
+| FWDN ZIP | 약 263MB; 파티션 크기 검사, ZIP CRC·필수 파일 검사, PC 전송 후 SHA-256 일치 |
+| QEMU 사용자 모드 | talker 발행 로그 확인; 기본 및 UDP 전용 설정 모두 25초 내 listener 수신 미확인 — 통신 검증은 통과하지 못함 |
+| 실물 보드·카메라 | 미연결; eMMC 기록·부팅·DDS 통신·카메라 캡처는 미검증 |
+
+QEMU 결과만으로 원인을 보드 이미지 문제나 에뮬레이션 문제로 단정하지 않는다. 실제 보드에서 talker/listener를 먼저 검증한다.
+빌드 경고는 기존 nng bbappend 대상 누락 1건과 camera-calibration-parsers / camera-info-manager의 BSD 라이선스 수집 경고 2건이다.
+
+이번 rootfs SHA-256:
+`448a417693dd9aeb814bffcbb330a29e22653ad88af944932e33902b0a3cfc69`
+
+이번 FWDN ZIP SHA-256:
+`9f62fdb9cc236f49f2f36e26b28f760d834a9232bbf4d6ffaa63f7fe930943dd`
+
+이 해시는 이번 산출물의 식별값이며 학생이 재빌드한 이미지의 해시가 같아야 한다는 뜻은 아니다.

@@ -1,0 +1,14 @@
+{
+  "poky": {
+    "url": "https://github.com/hulryung/poky.git",
+    "base": "6d1a878bbf24c66f7186b270f823fcdf82e35383",
+    "revision": "1fce925701687298983316df4adb6dbf4fff633a",
+    "branch": "d3g/kirkstone-ros2-fetch-fixes"
+  },
+  "poky/meta-openembedded": {
+    "url": "https://github.com/hulryung/meta-openembedded.git",
+    "base": "8bb16533532b6abc2eded7d9961ab2a108fd7a5b",
+    "revision": "4644cec40831ccedce8a836bd08f99fe03cac6e3",
+    "branch": "d3g/kirkstone-ros2-fetch-fixes"
+  }
+}

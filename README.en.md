@@ -15,3 +15,8 @@ Yeungnam University, Department of Automotive Software · 3rd-year major electiv
 | `docs/course-plan.en.docx` | Two-page A4 summary |
 
 Materials are updated as the course progresses. Questions: in class, or ask the instructor.
+
+## ROS 2 Yocto lab
+
+Download and setup instructions: [labs/ros2-yocto](labs/ros2-yocto/README.md).
+The course scripts extend the existing D3 SDK. Complete the prerequisites before running `run-build.sh`.

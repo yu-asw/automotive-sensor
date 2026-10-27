@@ -15,3 +15,8 @@
 | `docs/수업진행계획.docx` | A4 2쪽 요약본 |
 
 자료는 수업 진행에 따라 갱신됩니다. 질문은 수업 시간 또는 담당 교수에게.
+
+## ROS 2 Yocto lab
+
+Download and setup instructions: [labs/ros2-yocto](labs/ros2-yocto/README.md).
+The course scripts extend the existing D3 SDK. Complete the prerequisites before running `run-build.sh`.

@@ -1,0 +1,12 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ROS 2 데모 워크숍 — SSH로 D3를 연결하고 실행하기</title><style>body{font:17px/1.8 system-ui,sans-serif;color:#203044;max-width:1060px;margin:auto;padding:32px 24px}h1,h2,h3{line-height:1.35}h2{margin-top:2.5em;border-top:1px solid #ccd6df;padding-top:24px}a{color:#145ea5}pre{background:#eef3f7;padding:18px;overflow:auto;border-radius:8px;line-height:1.55}code{font-size:.9em}table{border-collapse:collapse;width:100%;display:block;overflow:auto}td,th{padding:10px;border:1px solid #cbd5df;text-align:left;vertical-align:top}th{background:#eef3f7}.toc{background:#f5f8fa;padding:16px 24px}.toc ul{padding-left:22px}nav{display:flex;gap:16px;flex-wrap:wrap}strong{color:#103f69}@media print{body{font-size:10pt;padding:0}nav,.toc{display:none}pre{white-space:pre-wrap;overflow-wrap:anywhere}h2,h3{break-after:avoid}tr,pre{break-inside:avoid}a{color:inherit}table{display:table;font-size:9pt}}</style></head><body><nav><a href="index.html">실습서</a><a href="instructor.html">강사용 진행표</a><a href="results.html">제출 기록</a><a href="../../downloads/ros2-demos-workshop.zip">ZIP</a></nav><main><div class="toc">
+<ul>
+<li><a href="#ros-2-ssh-d3">ROS 2 데모 워크숍 — SSH로 D3를 연결하고 실행하기</a></li>
+</ul>
+</div>
+<h1 id="ros-2-ssh-d3">ROS 2 데모 워크숍 — SSH로 D3를 연결하고 실행하기</h1>
+<p>180분 · ROS 2 Humble · Ubuntu 22.04 PC + 디스플레이 없는 D3-G</p>
+<p><a href="index.html">웹 실습서</a> · <a href="index.html">실습서 원본</a> · <a href="instructor.html">강사용 진행표</a> · <a href="results.html">학생 결과 기록</a> · <a href="../../downloads/ros2-demos-workshop.zip">오프라인 ZIP</a></p>
+<p>PC에서는 turtlesim, rqt_graph, 영상 뷰어, rosbag을 실행합니다. D3에서는 SSH로 talker/listener와 USB 카메라 노드를 실행합니다. SSH X11 전달이나 D3 디스플레이는 필요하지 않습니다.</p>
+<p>실행 순서: SSH 접속 → 메시지 송수신 → PC–D3 통신 → 거북이 운전 → 서비스·파라미터·액션 → 카메라 → 기록·재생.</p>
+<p>현재 상태: 문서 및 보조 도구 작성. 실제 Ubuntu/D3에서의 리허설 결과는 아직 없습니다. 이전 이미지 빌드 성공은 이번 데모의 동작 확인을 의미하지 않습니다.</p>
+<p><code>bash scripts/check-env.sh pc</code> 또는 D3에서 <code>sh scripts/check-env.sh d3</code>로 준비 상태를 확인합니다. <code>scripts/env.sh</code>는 각 ROS 터미널에서 읽는 환경 설정 파일입니다. 주소·계정·비밀번호는 포함하지 않습니다.</p></main></body></html>

@@ -1,0 +1,111 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>강사용 진행표 — ROS 2 데모 워크숍</title><style>body{font:17px/1.8 system-ui,sans-serif;color:#203044;max-width:1060px;margin:auto;padding:32px 24px}h1,h2,h3{line-height:1.35}h2{margin-top:2.5em;border-top:1px solid #ccd6df;padding-top:24px}a{color:#145ea5}pre{background:#eef3f7;padding:18px;overflow:auto;border-radius:8px;line-height:1.55}code{font-size:.9em}table{border-collapse:collapse;width:100%;display:block;overflow:auto}td,th{padding:10px;border:1px solid #cbd5df;text-align:left;vertical-align:top}th{background:#eef3f7}.toc{background:#f5f8fa;padding:16px 24px}.toc ul{padding-left:22px}nav{display:flex;gap:16px;flex-wrap:wrap}strong{color:#103f69}@media print{body{font-size:10pt;padding:0}nav,.toc{display:none}pre{white-space:pre-wrap;overflow-wrap:anywhere}h2,h3{break-after:avoid}tr,pre{break-inside:avoid}a{color:inherit}table{display:table;font-size:9pt}}</style></head><body><nav><a href="index.html">실습서</a><a href="instructor.html">강사용 진행표</a><a href="results.html">제출 기록</a><a href="../../downloads/ros2-demos-workshop.zip">ZIP</a></nav><main><div class="toc">
+<ul>
+<li><a href="#ros-2">강사용 진행표 — ROS 2 데모 워크숍</a><ul>
+<li><a href="#180">180분 진행</a></li>
+<li><a href="#_1">사전 리허설 — 실제 결과를 입력할 것</a></li>
+<li><a href="#_2">설명 포인트</a></li>
+<li><a href="#_3">자료 재생성</a></li>
+<li><a href="#2026-11-04">작성 환경 검증 기록 — 2026-11-04</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h1 id="ros-2">강사용 진행표 — ROS 2 데모 워크숍</h1>
+<h2 id="180">180분 진행</h2>
+<table>
+<thead>
+<tr>
+<th>시간</th>
+<th>내용</th>
+<th>진행 확인</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–15분</td>
+<td>구성 설명, PC/D3 구분, SSH 접속</td>
+<td>모든 학생이 D3 OS/CPU 확인</td>
+</tr>
+<tr>
+<td>15–30분</td>
+<td>① talker/listener</td>
+<td>연속 수신 확인</td>
+</tr>
+<tr>
+<td>30–45분</td>
+<td>② PC–D3, Domain ID</td>
+<td>원격 수신 및 불일치/복구</td>
+</tr>
+<tr>
+<td>45–65분</td>
+<td>③ 거북이 운전</td>
+<td>토픽 명령과 위치 구분</td>
+</tr>
+<tr>
+<td>65–85분</td>
+<td>④ 서비스·파라미터·액션</td>
+<td>생성·색 변경·회전·취소</td>
+</tr>
+<tr>
+<td>85–95분</td>
+<td>휴식</td>
+<td></td>
+</tr>
+<tr>
+<td>95–130분</td>
+<td>⑤ 카메라</td>
+<td>직접 캡처 → 원격 영상 → 빈도 비교</td>
+</tr>
+<tr>
+<td>130–160분</td>
+<td>⑥ 기록·재생</td>
+<td>거북이 필수, 카메라 선택</td>
+</tr>
+<tr>
+<td>160–180분</td>
+<td>자유 실험·결과 정리</td>
+<td>개별 결과 기록</td>
+</tr>
+</tbody>
+</table>
+<p>빌드와 이미지 플래시는 수업 전에 끝냅니다. SSH 접속 문제로 15분을 넘기면 해당 학생은 PC 데모로 진행하고 강사가 보드 문제를 별도로 확인합니다. 카메라가 실패하면 거북이 bag으로 기록·재생 목표를 달성합니다. 보드·카메라 항목은 미실시 또는 실패로 남깁니다.</p>
+<h2 id="_1">사전 리허설 — 실제 결과를 입력할 것</h2>
+<p>현재 이 체크리스트는 미완료입니다. 로컬 문서 검사로 체크하지 않습니다.</p>
+<ul>
+<li>[ ] Ubuntu 22.04 데스크톱에서 Humble 및 PC 패키지 설치 확인</li>
+<li>[ ] D3 이미지 부팅과 SSH 서버 확인; 보드별 IP·계정·인증 방법·서버 지문 배부</li>
+<li>[ ] 학생은 PC 터미널에서 SSH 접속; D3 디스플레이/X11 없이 실행</li>
+<li>[ ] 팀별 Domain ID 배정 및 같은 보드를 공유할 때의 사용 순서 확정</li>
+<li>[ ] D3 자체 talker/listener 실제 수신</li>
+<li>[ ] PC–D3 실제 수신 및 Domain ID 복구</li>
+<li>[ ] PC에서 turtlesim·rqt_graph·서비스·파라미터·회전 액션·F 취소</li>
+<li>[ ] D3 카메라 장치·포맷·해상도 확인, V4L2 캡처</li>
+<li>[ ] PC 뷰어 실제 영상 및 양쪽 수신 빈도 측정</li>
+<li>[ ] 거북이 bag 기록·재생; 카메라 bag 5~10초 기록·재생</li>
+<li>[ ] 오프라인 ZIP 압축 해제 후 index.html 열기</li>
+</ul>
+<p>여러 학생이 한 D3를 함께 쓰면 Domain ID만 다르게 해도 USB 카메라 장치는 공유됩니다. 카메라 노드는 한 명이 실행하고 같은 팀 Domain에서 함께 관찰하거나 순번을 정합니다. 장치를 여러 노드가 동시에 열지 않게 합니다.</p>
+<p>학생 PC의 설치/화면/망이 준비되지 않으면 강사 데스크톱에서 시연할 수 있지만, 이를 학생 개별 실행 완료로 기록하지 않습니다.</p>
+<h2 id="_2">설명 포인트</h2>
+<ul>
+<li>SSH 연결과 DDS 통신은 서로 다른 경로다.</li>
+<li>노드 실행 위치와 결과 표시 위치를 구분한다.</li>
+<li>토픽은 데이터 스트림, 서비스는 요청/응답, 액션은 목표·피드백·결과와 취소다.</li>
+<li>센서 드라이버와 뷰어를 바꿔도 메시지 인터페이스로 연결한다.</li>
+<li>bag은 실험 당시의 토픽 데이터를 보관한다. 원래 센서 없이 재현할 수 있지만 물리 세계 자체를 재현하는 것은 아니다.</li>
+</ul>
+<h2 id="_3">자료 재생성</h2>
+<p>Python 3와 <code>Markdown</code> 패키지가 있는 별도 도구 환경에서 저장소 루트를 기준으로 실행합니다.</p>
+<pre><code class="language-bash">python3 workshops/ros2-demos/scripts/build-materials.py
+</code></pre>
+<p>생성물: 웹 실습서 <code>index.html</code>, 보조 웹 문서, <code>downloads/ros2-demos-workshop.zip</code>. 기존 ros2-camera ZIP은 별도 자료로 유지합니다.</p>
+<h2 id="2026-11-04">작성 환경 검증 기록 — 2026-11-04</h2>
+<p>macOS에서 확인한 항목:</p>
+<ul>
+<li>실습서의 Bash/sh 명령 블록 33개 구문 검사 통과</li>
+<li>보조 셸 스크립트의 Bash/POSIX sh 구문 검사 통과</li>
+<li>잘못된 Domain ID·역할 입력 거부, ROS 미설치 상태 실패 반환 확인</li>
+<li>HTML 4개 페이지의 로컬 링크·목차 앵커 검사 통과</li>
+<li>ZIP CRC 검사 및 압축 해제 파일과 원본의 일치 확인</li>
+</ul>
+<p>이 환경에는 ROS 2가 없으며 D3 SSH 접속 정보도 이번 작업에서 제공되지 않았습니다. 따라서 실제 패키지 설치, DDS 송수신, GUI 표시, 카메라, bag 재생은 실행 검증하지 않았습니다. 위 사전 리허설에서 확인해야 합니다.</p></main></body></html>

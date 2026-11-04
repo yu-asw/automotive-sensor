@@ -24,3 +24,9 @@ The course scripts extend the existing D3 SDK. Complete the prerequisites before
 ## ROS 2 on D3-G — Student workshop
 
 [Slides and tutorial](workshops/ros2-camera/README.md) · [Download student kit](downloads/ros2-d3g-student-kit.zip)
+
+## ROS 2 demos — headless D3 over SSH
+
+[워크숍 실습서 / Workshop](workshops/ros2-demos/README.md) · [웹 실습서](workshops/ros2-demos/index.html) · [Offline ZIP](downloads/ros2-demos-workshop.zip)
+
+SSH setup, talker/listener, PC–D3 communication, turtlesim, services/actions, USB camera, and rosbag recording/playback. GUI tools run on the Ubuntu PC.
